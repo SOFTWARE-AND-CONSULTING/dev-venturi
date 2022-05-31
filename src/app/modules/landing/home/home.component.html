@@ -1,0 +1,35 @@
+<div class="grid gap-8 grid-cols-5">
+  <div [matMenuTriggerFor]="menu" *ngFor="let item of items" [@shake]="itemSelected === item.id"
+    (click)="itemSelected = item.id;" class="box-neu col-span-1 p-4">
+    <div class="{{item?.id === itemSelected ? 'bg-primary' : ''}} br-50 justify-center items-center p-3 flex flex-col">
+      <mat-icon class="icon-size-20 {{item?.id === itemSelected ? 'text-white' : 'text-primary'}}"
+        [svgIcon]="item?.icon"></mat-icon>
+      <span
+        class="font-bold text-2xl {{item?.id === itemSelected ? 'text-white' : 'text-primary'}}">{{item?.label}}</span>
+    </div>
+  </div>
+  <mat-menu #menu="matMenu" yPosition="below">
+    <button mat-menu-item (click)="goTo('/ingresos-manifiesto')" [matMenuTriggerFor]="submenu">
+      <span>Manifiesto</span>
+    </button>
+    <button mat-menu-item>
+      <span>Actualizar envíos</span>
+    </button>
+    <button mat-menu-item>
+      <span>Inventarios</span>
+    </button>
+  </mat-menu>
+
+  <mat-menu #submenu="matMenu">
+    <button mat-menu-item>Mercancía</button>
+    <button mat-menu-item>Documento</button>
+    <button mat-menu-item>Ingreso por vía electrónica</button>
+    <button mat-menu-item [matMenuTriggerFor]="submenu2">Consolidar envíos</button>
+    <button mat-menu-item [matMenuTriggerFor]="submenu2">Generar valijas/manifiestos</button>
+  </mat-menu>
+
+  <mat-menu #submenu2="matMenu">
+    <button mat-menu-item>--</button>
+    <button mat-menu-item>--</button>
+  </mat-menu>
+</div>

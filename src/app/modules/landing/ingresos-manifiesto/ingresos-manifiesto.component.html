@@ -1,0 +1,273 @@
+<div class="w-full">
+    <div class="mt-2 mb-5">
+        <mat-icon (click)="goBack()" class="cursor-pointer icon-size-8 text-primary" [svgIcon]="'mat_outline:arrow_back'"></mat-icon>
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+            Ingresos por manifiestos
+        </h2>
+    </div>
+    <div class="flex flex-col gap-6 p-5 rounded-2xl shadow overflow-y-auto bg-card h-36rem" cdkScrollable>
+        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+            <div class="flex grid grid-cols-8 gap-6 items-center flex-row">
+                <button class="col-span-2" mat-flat-button color="primary">
+                    Visualizar factura
+                    <mat-icon [svgIcon]="'heroicons_outline:document-download'"></mat-icon>
+                </button>
+                <div class="col-span-1">
+                    <label>Servicio:</label>
+                    <mat-radio-group class="flex flex-col mt-2" [color]="'primary'" [value]="'just-good'">
+                        <mat-radio-button class="mb-2" [value]="'aereo'">
+                            Aéreo
+                        </mat-radio-button>
+                        <mat-radio-button class="mb-2" [value]="'maritimo'">
+                            Marítimo
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div class="col-span-3 text-center">
+                    <h3 class="text-2xl font-bold">Último nro. procesado:</h3>
+                    <h3 class="text-primary text-2xl font-bold">0</h3>
+                </div>
+                <div class="col-span-2 flex flex-col">
+                    <div>
+                        <label>Fecha de salida del envio:</label>
+                        <mat-form-field
+                            class="fuse-mat-no-subscript fuse-mat-dense invisible absolute inset-0 -mt-2.5 opacity-0 pointer-events-none">
+                            <input matInput [matDatepicker]="dueDatePicker">
+                            <mat-datepicker #dueDatePicker>
+                                <mat-datepicker-actions>
+                                    <button mat-button matDatepickerCancel>
+                                        Clear
+                                    </button>
+                                    <button mat-flat-button [color]="'primary'" matDatepickerApply>
+                                        Select
+                                    </button>
+                                </mat-datepicker-actions>
+                            </mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <label>Total de envíos manifestados: </label>
+                        <span class="font-bold text-xl">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+            <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
+                <mat-form-field class="w-full col-span-2">
+                    <mat-label>Referencia</mat-label>
+                    <input matInput required>
+                </mat-form-field>
+                <mat-form-field class="flex-auto col-span-2">
+                    <mat-label>Origen</mat-label>
+                    <select matNativeControl [placeholder]="'Seleccione'">
+                        <option value=""></option>
+                        <option value="select1-2">--</option>
+                        <option value="select1-3">--</option>
+                    </select>
+                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:location-marker'"></mat-icon>
+                </mat-form-field>
+                <mat-form-field class="flex-auto col-span-2">
+                    <mat-label>Remitente</mat-label>
+                    <select matNativeControl [placeholder]="'Seleccione'">
+                        <option value=""></option>
+                        <option value="select1-2">--</option>
+                        <option value="select1-3">--</option>
+                    </select>
+                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:user'"></mat-icon>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+            <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
+                <mat-form-field class="flex-auto col-span-2">
+                    <mat-label>Casillero</mat-label>
+                    <select matNativeControl [placeholder]="'Seleccione'">
+                        <option value=""></option>
+                        <option value="select1-2">--</option>
+                        <option value="select1-3">--</option>
+                    </select>
+                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:archive'"></mat-icon>
+                </mat-form-field>
+                <mat-form-field class=" mt-6 w-full col-span-2">
+                    <input matInput required>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-2">
+                    <mat-label>Tipo cliente</mat-label>
+                    <input matInput required>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+            <div class="flex grid grid-cols-10 gap-6 items-center flex-row">
+                <mat-form-field class="w-full col-span-1">
+                    <mat-label>Valor global ($)</mat-label>
+                    <input matInput required>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-1">
+                    <mat-label>Suma items ($)</mat-label>
+                    <input matInput required disabled>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-1">
+                    <mat-label>Otros ($)</mat-label>
+                    <input matInput required>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-1">
+                    <mat-label>Total factura ($)</mat-label>
+                    <input matInput required disabled>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-1">
+                    <mat-label>Tipo envio</mat-label>
+                    <input matInput required disabled>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-1">
+                    <mat-label>Peso (kg)</mat-label>
+                    <input matInput required>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-1">
+                    <mat-label>Alto (cm)</mat-label>
+                    <input matInput required disabled>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-1">
+                    <mat-label>Ancho (cm)</mat-label>
+                    <input matInput required disabled>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-1">
+                    <mat-label>Largo (cm)</mat-label>
+                    <input matInput required disabled>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-1">
+                    <mat-label>Volumen (kg)</mat-label>
+                    <input matInput required disabled>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+            <div class="flex grid grid-cols-10 gap-6 items-center flex-row">
+                <div class="col-span-3 grid grid-cols-4 gap-6">
+                    <label class="col-span-4">Validación de factura comercial</label>
+                    <mat-form-field class="w-full col-span-2">
+                        <mat-label>¿Tiene factura?</mat-label>
+                        <select matNativeControl [placeholder]="'Seleccione'">
+                            <option value=""></option>
+                            <option value="select1-2">SI</option>
+                            <option value="select1-3">NO</option>
+                        </select>
+                    </mat-form-field>
+                    <mat-form-field class="w-full col-span-2">
+                        <mat-label>Validado</mat-label>
+                        <select matNativeControl [placeholder]="'Seleccione'">
+                            <option value=""></option>
+                            <option value="select1-2">SI</option>
+                            <option value="select1-3">NO</option>
+                        </select>
+                    </mat-form-field>
+                </div>
+                <div class="col-span-2 grid grid-cols-2 gap-6">
+                    <label>Repacking</label>
+                    <mat-form-field class="w-full col-span-2">
+                        <mat-label>¿Envio reempaquetado?</mat-label>
+                        <select matNativeControl [placeholder]="'Seleccione'">
+                            <option value=""></option>
+                            <option value="select1-2">SI</option>
+                            <option value="select1-3">NO</option>
+                        </select>
+                    </mat-form-field>
+                </div>
+                <div class="col-span-5 grid grid-cols-6 gap-6">
+                    <table mat-table class="col-span-4 mat-elevation-z3">
+                        <!-- Position Column -->
+                        <ng-container matColumnDef="no">
+                            <th mat-header-cell *matHeaderCellDef> No. piezas </th>
+                            <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+                        </ng-container>
+
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="description">
+                            <th mat-header-cell *matHeaderCellDef> Descripción </th>
+                            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                        </ng-container>
+
+                        <!-- Weight Column -->
+                        <ng-container matColumnDef="value">
+                            <th mat-header-cell *matHeaderCellDef> Valor </th>
+                            <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+                    <div class="col-span-2 grid gap-6">
+                        <button mat-flat-button color="primary">
+                            Agregar
+                            <mat-icon [svgIcon]="'heroicons_outline:plus-sm'"></mat-icon>
+                        </button>
+                        <button mat-flat-button color="accent">
+                            Modificar
+                            <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                        </button>
+                        <button mat-flat-button color="warn">
+                            Eliminar
+                            <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-span-5 grid grid-cols-6 gap-6">
+                    <div class="col-span-6 grid grid-cols-2">
+                        <span class="col-span-2">Total items: 0</span>
+                        <span class="col-span-2">Items permitidos: 0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
+            <div class="col-span-3 border-2 border-dashed border-gray-300 rounded-2xl p-5">
+                <mat-form-field class="flex-auto w-full">
+                    <mat-label>Status</mat-label>
+                    <select matNativeControl [placeholder]="'Seleccione'">
+                        <option value=""></option>
+                        <option value="select1-2">--</option>
+                        <option value="select1-3">--</option>
+                    </select>
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded fuse-mat-bold w-full">
+                    <mat-label>Breve descripción</mat-label>
+                    <textarea class="min-h-5 my-0 resize-none" style="margin: 11px 0 !important; padding: 0 !important;"
+                        [rows]="3" matInput #messageInput></textarea>
+                </mat-form-field>
+            </div>
+            <div class=" border-2 border-dashed border-gray-300 rounded-2xl p-5 col-span-3 grid grid-cols-6 gap-6">
+                <label class="col-span-6">Solo para desconocidos</label>
+                <mat-form-field class="flex-auto col-span-3">
+                    <mat-label>Unit number</mat-label>
+                    <select matNativeControl [placeholder]="'Seleccione'">
+                        <option value=""></option>
+                        <option value="select1-2">--</option>
+                        <option value="select1-3">--</option>
+                    </select>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-3">
+                    <mat-label>Nro rack</mat-label>
+                    <input matInput required>
+                </mat-form-field>
+                <mat-checkbox class="flex items-center h-10 min-h-10 col-span-3" [color]="'primary'">
+                    Marca de envío especial
+                </mat-checkbox>
+            </div>
+        </div>
+
+        <div class="flex flex-row justify-center gap-6">
+            <button class="col-span-2" mat-flat-button color="primary">
+                Aceptar
+                <mat-icon [svgIcon]="'heroicons_outline:check-circle'"></mat-icon>
+            </button>
+            <button class="col-span-2" mat-flat-button color="accent">
+                Limpiar
+                <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+            </button>
+            <button class="col-span-2" mat-flat-button color="warn">
+                Cancelar
+                <mat-icon [svgIcon]="'mat_outline:close'"></mat-icon>
+            </button>
+        </div>
+    </div>

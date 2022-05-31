@@ -1,0 +1,27 @@
+<!-- Loading bar -->
+<fuse-loading-bar></fuse-loading-bar>
+
+<div class="flex grid grid-cols-6 flex-row items-center justify-center w-full h-full">
+    <div class="col-span-1 box-left h-full p-5 flex flex-col items-center justify-around">
+        <img class="w-30" src="../../../../assets/images/logo/logo-zoom.png">
+        <div class="mt-5">
+            <h3><strong>Usuario:</strong> Mary Guevara</h3>
+            <h3><strong>Oficina:</strong> TAQUILLA</h3>
+        </div>
+        <img class="w-50" src="../../../../assets/images/ui/scene-1.svg">
+        <div>
+          <a mat-flat-button class="flex flex-row items-center mt-5" [routerLink]="''">
+              <span>Ayuda</span>
+              <mat-icon class="ml-2 icon-size-5" [svgIcon]="'heroicons_outline:hand'"></mat-icon>
+          </a>
+            <a class="mt-8" mat-flat-button [color]="'primary'" [routerLink]="''">
+                <span>Salir</span>
+                <mat-icon class="ml-2 icon-size-5" [svgIcon]="'heroicons_solid:arrow-narrow-left'"></mat-icon>
+            </a>
+        </div>
+    </div>
+    <div class="col-span-5 p-5 w-full">
+        <router-outlet *ngIf="true"></router-outlet>
+    </div>
+</div>
+        

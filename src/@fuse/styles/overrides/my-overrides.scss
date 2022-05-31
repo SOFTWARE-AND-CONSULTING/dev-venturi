@@ -1,0 +1,35 @@
+.w-70 {
+    width: 70%;
+}
+
+.w-30 {
+    width: 30%;
+}
+
+.box-left {
+    border-bottom-right-radius: 60px;
+    border-top-right-radius: 60px;
+    min-width: 250px;
+    background: #ffffff;
+    box-shadow: 20px 20px 41px #ededed,
+        -20px -20px 41px #ffffff;
+}
+
+.box-neu {
+    border-radius: 15px;
+    background: #f1f5f9;
+    box-shadow: 20px 20px 41px #e0e4e8,
+        -20px -20px 41px #ffffff;
+}
+
+.br-50 {
+    border-radius: 15px;
+}
+
+.h-36rem {
+    height: 36rem;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
