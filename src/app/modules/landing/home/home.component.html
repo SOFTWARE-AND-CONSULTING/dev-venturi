@@ -9,7 +9,7 @@
     </div>
   </div>
   <mat-menu #menu="matMenu" yPosition="below">
-    <button mat-menu-item (click)="goTo('/ingresos-manifiesto')" [matMenuTriggerFor]="submenu">
+    <button mat-menu-item  [matMenuTriggerFor]="submenu">
       <span>Manifiesto</span>
     </button>
     <button mat-menu-item>
@@ -21,7 +21,7 @@
   </mat-menu>
 
   <mat-menu #submenu="matMenu">
-    <button mat-menu-item>Mercancía</button>
+    <button mat-menu-item (click)="goTo('/ingresos-manifiesto')">Mercancía</button>
     <button mat-menu-item>Documento</button>
     <button mat-menu-item>Ingreso por vía electrónica</button>
     <button mat-menu-item [matMenuTriggerFor]="submenu2">Consolidar envíos</button>
