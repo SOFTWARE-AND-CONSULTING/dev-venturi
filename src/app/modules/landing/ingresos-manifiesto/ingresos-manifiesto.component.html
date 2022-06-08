@@ -15,7 +15,7 @@
                 <div class="col-span-1">
                     <label>Servicio:</label>
                     <mat-radio-group class="flex flex-col mt-2" [color]="'primary'" [value]="'just-good'">
-                        <mat-radio-button class="mb-2" [value]="'aereo'">
+                        <mat-radio-button class="mb-2" [value]="'aereo'" checked="true" (change)="checkaerea($event)">
                             Aéreo
                         </mat-radio-button>
                         <mat-radio-button class="mb-2" [value]="'maritimo'">
@@ -56,23 +56,24 @@
             <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
                 <mat-form-field class="w-full col-span-2">
                     <mat-label>Referencia</mat-label>
-                    <input matInput required>
+                    <input matInput [(ngModel)]="referencia" (change)="buscarReferencia()" required>
                 </mat-form-field>
                 <mat-form-field class="flex-auto col-span-2">
                     <mat-label>Origen</mat-label>
-                    <select matNativeControl [placeholder]="'Seleccione'">
+                    <input matInput [(ngModel)]="shipperSelected" readonly>
+                    <!-- <select matNativeControl [placeholder]="'Seleccione'">
                         <option value=""></option>
                         <option value="select1-2">--</option>
                         <option value="select1-3">--</option>
-                    </select>
+                    </select> -->
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:location-marker'"></mat-icon>
                 </mat-form-field>
                 <mat-form-field class="flex-auto col-span-2">
                     <mat-label>Remitente</mat-label>
-                    <select matNativeControl [placeholder]="'Seleccione'">
-                        <option value=""></option>
-                        <option value="select1-2">--</option>
-                        <option value="select1-3">--</option>
+                    <select matNativeControl [(ngModel)]="proveedorSelected" name="remitente" [disabled]="shipperSelected === undefined">
+                        <option *ngFor="let proveedor of proveedores" [value]="proveedor.codproveedor" >
+                            {{proveedor.nombre}}
+                        </option>
                     </select>
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:user'"></mat-icon>
                 </mat-form-field>
@@ -80,21 +81,25 @@
         </div>
         <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
             <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
-                <mat-form-field class="flex-auto col-span-2">
+                <mat-form-field class="flex-auto col-span-1">
                     <mat-label>Casillero</mat-label>
-                    <select matNativeControl [placeholder]="'Seleccione'">
-                        <option value=""></option>
-                        <option value="select1-2">--</option>
-                        <option value="select1-3">--</option>
+                    <select matNativeControl [(ngModel)]="casilleroSelected" name="shipper" [disabled]="proveedorSelected === undefined">
+                        <option *ngFor="let casillero of casilleros" [value]="casillero.siglas">
+                            {{casillero.siglas}}
+                        </option>
                     </select>
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:archive'"></mat-icon>
                 </mat-form-field>
-                <mat-form-field class=" mt-6 w-full col-span-2">
-                    <input matInput required>
+                <mat-form-field class=" mt-6 w-full col-span-1">
+                    <input matInput (ngModelChange)="consultarCasillero()" [(ngModel)]="codCasillero" name="shipper" required [disabled]="casilleroSelected === undefined">
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-2">
+                    <mat-label></mat-label>
+                    <input matInput [(ngModel)]="nombrecasillero" readonly >
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-2">
                     <mat-label>Tipo cliente</mat-label>
-                    <input matInput required>
+                    <input matInput [(ngModel)]="tipoCliente"  readonly>
                 </mat-form-field>
             </div>
         </div>
@@ -102,43 +107,43 @@
             <div class="flex grid grid-cols-10 gap-6 items-center flex-row">
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Valor global ($)</mat-label>
-                    <input matInput required>
+                    <input matInput [(ngModel)]="valorGlobal" name="valorglobal" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Suma items ($)</mat-label>
-                    <input matInput required disabled>
+                    <input matInput [(ngModel)]="sumaItems" name="sumaitems" required disabled>
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Otros ($)</mat-label>
-                    <input matInput required>
+                    <input matInput [(ngModel)]="otrosItem" (ngModelChange)="sumarTotal()" name="otro"  required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Total factura ($)</mat-label>
-                    <input matInput required disabled>
+                    <input matInput [(ngModel)]="totalFactura" name="totalFactura" required disabled>
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Tipo envio</mat-label>
-                    <input matInput required disabled>
+                    <input matInput [(ngModel)]="tipoEnvio" name="tipoenvio" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Peso (kg)</mat-label>
-                    <input matInput required>
+                    <input matInput [(ngModel)]="pesoitems" name="peso" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Alto (cm)</mat-label>
-                    <input matInput required disabled>
+                    <input matInput [(ngModel)]="altoitems" name="Alto" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Ancho (cm)</mat-label>
-                    <input matInput required disabled>
+                    <input matInput [(ngModel)]="anchoitems" name="ancho" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Largo (cm)</mat-label>
-                    <input matInput required disabled>
+                    <input matInput [(ngModel)]="largoitems" name="largo" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Volumen (kg)</mat-label>
-                    <input matInput required disabled>
+                    <input matInput [(ngModel)]="volumenitems" name="volumen" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
             </div>
         </div>
@@ -175,38 +180,58 @@
                     </mat-form-field>
                 </div>
                 <div class="col-span-5 grid grid-cols-6 gap-6">
-                    <table mat-table class="col-span-4 mat-elevation-z3">
-                        <!-- Position Column -->
+                    <table  class="col-span-4 mat-elevation-z3">
+                        <!--
                         <ng-container matColumnDef="no">
                             <th mat-header-cell *matHeaderCellDef> No. piezas </th>
-                            <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+                            <td mat-cell *matCellDef="let element"> {{element.no}} </td>
                         </ng-container>
 
-                        <!-- Name Column -->
+
                         <ng-container matColumnDef="description">
                             <th mat-header-cell *matHeaderCellDef> Descripción </th>
-                            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                            <td mat-cell *matCellDef="let element"> {{element.description}} </td>
                         </ng-container>
 
-                        <!-- Weight Column -->
+
                         <ng-container matColumnDef="value">
                             <th mat-header-cell *matHeaderCellDef> Valor </th>
-                            <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+                            <td mat-cell *matCellDef="let element"> {{element.value}} </td>
                         </ng-container>
 
                         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> -->
+                        <thead>
+                            <tr class="text-center tr-table">
+                              <th scope="col">No. piezas</th>
+                              <th scope="col">Descripción</th>
+                              <th scope="col">Valor</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              *ngFor="let item of dataItemSelect"
+                              class="text-center tr-table"
+                            >
+                              <td>{{ item.no }}</td>
+                              <td>
+                                {{item.description}}
+                              </td>
+                              <td>{{ item.value }}</td>
+
+                            </tr>
+                          </tbody>
                     </table>
                     <div class="col-span-2 grid gap-6">
-                        <button mat-flat-button color="primary">
+                        <button mat-flat-button color="primary" (click)="openDialogagg()" [disabled]="casilleroSelected === undefined">
                             Agregar
                             <mat-icon [svgIcon]="'heroicons_outline:plus-sm'"></mat-icon>
                         </button>
-                        <button mat-flat-button color="accent">
+                        <button mat-flat-button color="accent" [disabled]="casilleroSelected === undefined">
                             Modificar
                             <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
                         </button>
-                        <button mat-flat-button color="warn">
+                        <button mat-flat-button color="warn" [disabled]="casilleroSelected === undefined">
                             Eliminar
                             <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
                         </button>
@@ -224,10 +249,10 @@
             <div class="col-span-3 border-2 border-dashed border-gray-300 rounded-2xl p-5">
                 <mat-form-field class="flex-auto w-full">
                     <mat-label>Status</mat-label>
-                    <select matNativeControl [placeholder]="'Seleccione'">
-                        <option value=""></option>
-                        <option value="select1-2">--</option>
-                        <option value="select1-3">--</option>
+                    <select matNativeControl [(ngModel)]="statusSelected" name="remitente" >
+                        <option *ngFor="let status of statusPais" [value]="status?.codestatus" >
+                            {{status?.siglas}}
+                        </option>
                     </select>
                 </mat-form-field>
                 <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded fuse-mat-bold w-full">
@@ -240,7 +265,7 @@
                 <label class="col-span-6">Solo para desconocidos</label>
                 <mat-form-field class="flex-auto col-span-3">
                     <mat-label>Unit number</mat-label>
-                    <select matNativeControl [placeholder]="'Seleccione'">
+                    <select matNativeControl disabled [placeholder]="'Seleccione'">
                         <option value=""></option>
                         <option value="select1-2">--</option>
                         <option value="select1-3">--</option>
@@ -248,16 +273,16 @@
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-3">
                     <mat-label>Nro rack</mat-label>
-                    <input matInput required>
+                    <input matInput disabled required>
                 </mat-form-field>
-                <mat-checkbox class="flex items-center h-10 min-h-10 col-span-3" [color]="'primary'">
+                <mat-checkbox class="flex items-center h-10 min-h-10 col-span-3" disabled [color]="'primary'">
                     Marca de envío especial
                 </mat-checkbox>
             </div>
         </div>
 
         <div class="flex flex-row justify-center gap-6">
-            <button class="col-span-2" mat-flat-button color="primary">
+            <button class="col-span-2" (click)="crearManifiestoForm()" mat-flat-button color="primary">
                 Aceptar
                 <mat-icon [svgIcon]="'heroicons_outline:check-circle'"></mat-icon>
             </button>

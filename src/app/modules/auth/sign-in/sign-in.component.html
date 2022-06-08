@@ -42,7 +42,7 @@
                         [formControlName]="'email'">
                     <mat-error *ngIf="signInForm.get('email').hasError('required')">
                         Usuario es requerido
-                    </mat-error>                    
+                    </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="w-full">
@@ -50,10 +50,11 @@
                     <input
                         id="code"
                         matInput
+                        [formControlName]="'code'"
                         >
-                    <!-- <mat-error *ngIf="signInForm.get('code').hasError('required')">
+                    <mat-error *ngIf="signInForm.get('code').hasError('required')">
                         Código es requerido
-                    </mat-error> -->
+                    </mat-error>
                 </mat-form-field>
 
                 <!-- Password field -->
@@ -85,7 +86,7 @@
                 </mat-form-field>
 
                 <!-- Actions -->
-                <div class="inline-flex items-end justify-between w-full mt-1.5">                    
+                <div class="inline-flex items-end justify-between w-full mt-1.5">
                     <a
                         class="text-md font-medium text-primary-500 hover:underline"
                         [routerLink]="['/forgot-password']">¿Olvidaste la contraseña?

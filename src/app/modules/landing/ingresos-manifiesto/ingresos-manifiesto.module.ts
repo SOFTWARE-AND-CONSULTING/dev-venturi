@@ -15,10 +15,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatDialogModule } from '@angular/material/dialog';
+import { DialogManifiestoComponent } from './dialog-manifiesto/dialog-manifiesto.component';
+import { MatSelectModule } from '@angular/material/select';
+import { DialogAggItemsComponent } from './dialog-agg-items/dialog-agg-items.component';
 
 @NgModule({
     declarations: [
-        IngesosManifiestoComponent
+        IngesosManifiestoComponent,
+        DialogManifiestoComponent,
+        DialogAggItemsComponent
     ],
     imports: [
         RouterModule.forChild(IngesosManifiestoRoutes),
@@ -34,7 +40,13 @@ import { MatBadgeModule } from '@angular/material/badge';
         MatInputModule,
         MatTableModule,
         MatCheckboxModule,
-        MatBadgeModule
+        MatBadgeModule,
+        MatDialogModule,
+        MatSelectModule
+    ],
+    entryComponents: [DialogManifiestoComponent, DialogAggItemsComponent],
+    exports: [
+        MatInputModule
     ]
 })
 export class IngesosManifiestoModule {

@@ -44,7 +44,7 @@ export class AuthSignInComponent implements OnInit {
         this.signInForm = this._formBuilder.group({
             email: ['', [Validators.required]],
             password: ['', Validators.required],
-            // code: ['', Validators.required]
+            code: ['', Validators.required]
         });
     }
 
@@ -56,43 +56,46 @@ export class AuthSignInComponent implements OnInit {
      * Sign in
      */
     signIn(): void {
+        console.log(this.signInForm.value);
         // Return if the form is invalid
         if (this.signInForm.invalid) {
             return;
         }
 
         // Disable the form
-        this.signInForm.disable();
+        //this.signInForm.disable();
 
         // Hide the alert
-        this.showAlert = false;
+        //this.showAlert = false;
+        console.log(this.signInForm.value);
 
         // Sign in
-        // this._authService.signIn(this.signInForm.value)
-        //     .subscribe(
-        //         () => {
+       /*  this._authService.signIn(this.signInForm.value)
+             .subscribe(
+                 () => { */
                     // const redirectURL = this._activatedRoute.snapshot.queryParamMap.get('redirectURL') || '/signed-in-redirect';
                     // this._router.navigateByUrl(redirectURL);
+                    localStorage.setItem('codusuario', '630');
                     this._router.navigate(['/home']);
 
-            //     },
-            //     (response) => {
+                /*  },
+                 (response) => {
 
             //         // Re-enable the form
-            //         this.signInForm.enable();
+                     this.signInForm.enable();
 
             //         // Reset the form
-            //         this.signInNgForm.resetForm();
+                     this.signInNgForm.resetForm();
 
             //         // Set the alert
-            //         this.alert = {
-            //             type: 'error',
-            //             message: 'Correo o contraseña incorrecto.'
-            //         };
+                      this.alert = {
+                         type: 'error',
+                         message: 'Correo o contraseña incorrecto.'
+                     };
 
             //         // Show the alert
-            //         this.showAlert = true;
-            //     }
-            // );
+                     this.showAlert = true;
+                 }
+             ); */
     }
 }

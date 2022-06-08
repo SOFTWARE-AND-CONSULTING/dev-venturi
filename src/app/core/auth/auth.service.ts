@@ -75,19 +75,20 @@ export class AuthService
         {
             return throwError('El usuario ya está logeado.');
         }
-
-        // return this._httpClient.get(`${environment.url_api}${constants.GET_LOGIN}${email}/${password}/${code}`).pipe(
-        return this._httpClient.post(`api/auth/sign-in`, credentials).pipe(
+        //usuario/show/:login/:password/:codoficina
+        return this._httpClient.get(`${environment.url_api}${constants.GET_LOGIN}${email}/${password}/${code}`).pipe(
+        //return this._httpClient.post(`api/auth/sign-in`, credentials).pipe(
             switchMap((response: any) => {
+                console.log(response);
 
                 // Store the access token in the local storage
-                this.accessToken = response.accessToken;
+                this.accessToken = response.data[0].claveenc;
 
                 // Set the authenticated flag to true
                 this._authenticated = true;
 
                 // Store the user on the user service
-                this._userService.user = response.user;
+                this._userService.user = response.data[0].login;
 
                 // Return a new observable with the response
                 return of(response);
