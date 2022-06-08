@@ -286,11 +286,11 @@
                 Aceptar
                 <mat-icon [svgIcon]="'heroicons_outline:check-circle'"></mat-icon>
             </button>
-            <button class="col-span-2" mat-flat-button color="accent">
+            <button class="col-span-2" (click)="limpiarForm()" mat-flat-button color="accent">
                 Limpiar
                 <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
             </button>
-            <button class="col-span-2" mat-flat-button color="warn">
+            <button class="col-span-2" (click)="goTo('/home')" mat-flat-button color="warn">
                 Cancelar
                 <mat-icon [svgIcon]="'mat_outline:close'"></mat-icon>
             </button>
