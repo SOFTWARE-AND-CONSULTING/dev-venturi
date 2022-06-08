@@ -128,7 +128,6 @@ export class DialogAggItemsComponent implements OnInit {
             this.api.get(`producto/show_productocategoriadetalles/${this.categoriaSelected}`).subscribe(
                 (res) => {
                     this.categoriasDetalle = res.data
-                    this.categoriasDetalle.selected = false
                     console.log(this.categoriasDetalle);
 
                 },
@@ -158,14 +157,10 @@ export class DialogAggItemsComponent implements OnInit {
 
       itemSelectedCheck(row:any){
 
-        row.selected = !row.selected
-        if(row.selected == true){
+
             this.itemSelected = row;
             this.descripcion = this.itemSelected.nombre;
-        }else{
-            this.itemSelected = null;
-            this.descripcion = null;
-        }
+
 
       }
 

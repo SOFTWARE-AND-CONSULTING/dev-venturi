@@ -143,6 +143,9 @@ export class IngesosManifiestoComponent
         this.statusSelected = null;
         this.referencia= null;
     }
+    randomInteger(n:any) {
+        return Math.floor(Math.pow(10, n-1) + Math.random() * (Math.pow(10, n) - Math.pow(10, n-1) - 1));
+      }
 
     crearManifiestoForm(){
         const fecha = moment().format('YYYY-MM-DD')
@@ -150,9 +153,9 @@ export class IngesosManifiestoComponent
         this.dataItemSelect.forEach((item) => {
            this.noPiezas = this.noPiezas+ Number(item.no)})
         const hora = currentTime.getHours()+':'+currentTime.getMinutes()+':'+currentTime.getSeconds()
-
+        const codguia = this.randomInteger(8);
         const params = {
-            codguia: "1307476891",
+            codguia: `${codguia}`,
             codciudadoriope: "424",
             fecha: `${fecha}`,
             fechapro: `${fecha}`,
@@ -160,14 +163,14 @@ export class IngesosManifiestoComponent
             codoficinades: `${this.dataUser[0].codoficina}`,
             contactorem: `${this.dataUser[0].nombre}`,
             direccionrem: `${this.dataUser[0].direccionobl}`,
-            telefonorem: `${this.dataUser[0].telefonoobl}`,
+            telefonorem: "0412-6098042",
             codcliente: `${this.dataUser[0].codcliente}`,
             coddestinatario: `${this.casillero[0].codcasillero}`,
             destinatario: `${this.casillero[0].siglas}${this.casillero[0].codcasillero}`,
             direcciondes: `${this.casillero[0].direccionobl}`,
             contactodes: `${this.casillero[0].nombre}`,
             codciudaddes: `${this.dataUser[0].codciudadcon}`,
-            telefonodes: `${this.casillero[0].telefonoobl}`,
+            telefonodes: "0412-6098042",
             codtipoenv: `${this.tipoEnvio}`,
             numeropie: "1",
             pesovol: `${this.volumenitems}`,
@@ -188,7 +191,7 @@ export class IngesosManifiestoComponent
             descripcioncon: `${this.itemSelected.descripcionpais}`,
             anulada: "f",
             cortesia: "f",
-            codusuario: `${this.dataUser.codcliente}`,
+            codusuario: `${this.codUser}`,
             codestaciondes: `${this.casillero[0].codoficina}`,
             descuento: "0",
             fechaing: `${fecha}`,
