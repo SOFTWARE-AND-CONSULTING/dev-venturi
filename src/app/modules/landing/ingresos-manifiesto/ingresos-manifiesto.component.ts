@@ -60,6 +60,10 @@ export class IngesosManifiestoComponent
     statusPais: any;
     zipcode: any;
     statusSelected:any;
+    casillero: any;
+    description: any;
+    noPiezas: number=0;
+    prealertData: any;
     /**
      * Constructor
      */
@@ -135,36 +139,196 @@ export class IngesosManifiestoComponent
         this.largoitems= null;
         this.volumenitems= null;
         this.dataItemSelect =[];
+        this.description = null;
+        this.statusSelected = null;
+        this.referencia= null;
     }
 
     crearManifiestoForm(){
-        this.nombrecasillero = null;
-        this.codigoCliente = null;
-        this.creacionManifiesto = null;
-        this.shipperSelected = null;
-        this.proveedorSelected = null;
-        this.casilleroSelected = null;
-        this.codCasillero    = null;
-        this.nombrecasillero= null;
-        this.tipoCliente= null;
-        this.valorGlobal= null;
-        this.sumaItems= null;
-        this.otrosItem= null;
-        this.totalFactura= null;
-        this.tipoEnvio= null;
-        this.pesoitems= null;
-        this.altoitems= null;
-        this.anchoitems= null;
-        this.largoitems= null;
-        this.volumenitems= null;
-        this.dataItemSelect =[];
-        Swal.fire({
-            title: 'Hubo un problema al crear el manifiesto',
-            icon: 'info',
-            confirmButtonColor: '#050506',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'OK',
-          })
+        const fecha = moment().format('YYYY-MM-DD')
+        var currentTime = new Date();
+        this.dataItemSelect.forEach((item) => {
+           this.noPiezas = this.noPiezas+ Number(item.no)})
+        const hora = currentTime.getHours()+':'+currentTime.getMinutes()+':'+currentTime.getSeconds()
+
+        const params = {
+            codguia: "1307476891",
+            codciudadoriope: "424",
+            fecha: `${fecha}`,
+            fechapro: `${fecha}`,
+            codoficinaori: `${this.dataUser[0].codoficina}`,
+            codoficinades: `${this.dataUser[0].codoficina}`,
+            contactorem: `${this.dataUser[0].nombre}`,
+            direccionrem: `${this.dataUser[0].direccionobl}`,
+            telefonorem: `${this.dataUser[0].telefonoobl}`,
+            codcliente: `${this.dataUser[0].codcliente}`,
+            coddestinatario: `${this.casillero[0].codcasillero}`,
+            destinatario: `${this.casillero[0].siglas}${this.casillero[0].codcasillero}`,
+            direcciondes: `${this.casillero[0].direccionobl}`,
+            contactodes: `${this.casillero[0].nombre}`,
+            codciudaddes: `${this.dataUser[0].codciudadcon}`,
+            telefonodes: `${this.casillero[0].telefonoobl}`,
+            codtipoenv: `${this.tipoEnvio}`,
+            numeropie: "1",
+            pesovol: `${this.volumenitems}`,
+            pesobru: `${this.pesoitems}`,
+            basicoori: "0",
+            sobrepesoori: "0",
+            subtotori: "0",
+            otrosori: `${this.otrosItem}`,
+            totalpag: `${this.totalFactura}`,
+            mercancia: `${this.itemSelected.idproductocategoriadetalle}`,
+            codservicio: `${this.casillero[0].codservicio}`,
+            codpaisdes: `${this.itemSelected.codigodescripcionpais}`,
+            codtipopag: "1",
+            referencia: `${this.referencia}`,
+            codoficinaope: `${this.casillero[0].codoficina}`,
+            descuentoemp: "f",
+            codestatus: `${this.statusSelected}`,
+            descripcioncon: `${this.itemSelected.descripcionpais}`,
+            anulada: "f",
+            cortesia: "f",
+            codusuario: `${this.dataUser.codcliente}`,
+            codestaciondes: `${this.casillero[0].codoficina}`,
+            descuento: "0",
+            fechaing: `${fecha}`,
+            costobas: "0",
+            costoadi: "0",
+            ciudaddesint: "NULL",
+            codmanifiesto: "0",
+            largo: `${this.altoitems}`,
+            ancho: `${this.anchoitems}`,
+            alto: `${this.largoitems}`,
+            dimensiones: `${this.anchoitems}x${this.largoitems}x${this.altoitems}`,
+            codshipper: `${this.creacionManifiesto}`,
+            direccionip: "",
+            codagente: "0",
+            cantidad25: "0",
+            otrosdes: "0",
+            totalestatuspro: "0",
+            codruta: "0",
+            observacion: `${this.description}`,
+            codtipopes: "2",
+            hora: "NULL",
+            horareal: `${hora}`,
+            fechahorareal: "NULL",
+            casilleroexcento: "f",
+            guiaelectronica: "f",
+            nummedioskilos: "6",
+            subtotal: "8",
+            seguro: "5",
+            otros: `${this.otrosItem}`,
+            total: `${this.totalFactura}`,
+            fechamod: "",
+            codguiadet: "",
+            basico: "12",
+            adicional: "2",
+            codproducto: `${this.itemSelected.idproductocategoriadetalle}`,
+            descuentobas: "0",
+            descuentosob: "0",
+            tipocarga: "MBV",
+            gastosaduanal: "0",
+            tiporef: "NULL",
+            nomcliente: "NULL",
+            tlfemisor: "NULL",
+            direccionemisor: "NULL",
+            ciudademisor: "NULL",
+            paisorigen: "VENEZUELA",
+            siglaspaisori: "VE",
+            direcciondestino: "NULL",
+            companiadestino: "NULL",
+            nombredestino: `${this.casillero[0].nombre}`,
+            telefonodestino: `${this.casillero[0].telefonoobl}`,
+            ciudaddestino: "NULL",
+            paisdestino: "VENEZUELA",
+            codpaisori:"1",
+            siglaspaisdes: "VE",
+            zipcode: "NULL",
+            suburbs: "NULL",
+            codcasillero: `${this.casillero[0].siglas}${this.casillero[0].codcasillero}`,
+            npiezas: `${this.noPiezas}`,
+            pesob: "0.75",
+            depth: "0",
+            descripcion: `${this.itemSelected.descripcionpais}`,
+            valordeclarado: `${this.valorGlobal}`,
+            cantidadasegurada: `${this.noPiezas}`,
+            tiposeguro: "Y",
+            tipoenv: "P",
+            retenido: "f",
+            generic1: "NULL",
+            generic2: "NULL",
+            generic3: "NULL",
+            procesado: "f",
+            codguiazoom: "",
+            tipoprealert: "1",
+            taxid: "NULL",
+            email: `${this.casillero[0].mail}`,
+            cantidaditem: `${this.dataItemSelect.length}`,
+            valordeclaradoglobal: `${this.valorGlobal}`,
+            nomvendedor: "NULL",
+            repacking: "f",
+            nombrearc: "NULL",
+            tipo_tarifa: "90",
+            fechasync: "",
+            codguiadhl: "NULL",
+            cuentadhl: "0",
+            detalleprealert: [
+                {
+                    codguiaprealertdetalle: `${this.prealertData ? this.prealertData.codguiaprealertdetalle : ''}`,
+                    referencia: `${this.referencia}`,
+                    codcasillero: `${this.casillero[0].codcasillero}`,
+                    descripcion: `${this.itemSelected.descripcionpais}`,
+                    valordeclarado: `${this.valorGlobal}`,
+                    cantidaditem: `${this.dataItemSelect.length}`,
+                    anulada: "f",
+                    fechacre: `${this.prealertData ? this.prealertData.fechacredetalle : ''}`,
+                    codtipoprealertmod: `${this.prealertData ? this.prealertData.fechacredetalle : ''}`,
+                    fechamod: "",
+                    codguiaprealertdetext: `${this.prealertData ? this.prealertData.codguiaprealertdetext : ''}`
+                }
+            ]
+        }
+
+        this.api.post('ingresomanifiesto/create', params).subscribe(
+            async (res) => {
+                console.log(res);
+              Swal.fire({
+                title: 'Se creó el manifiesto correctamente',
+                icon: 'success',
+                confirmButtonColor: '#050506',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'OK',
+              }).then(() => {
+                this.nombrecasillero = null;
+                this.codigoCliente = null;
+                this.creacionManifiesto = null;
+                this.shipperSelected = null;
+                this.proveedorSelected = null;
+                this.casilleroSelected = null;
+                this.codCasillero    = null;
+                this.nombrecasillero= null;
+                this.tipoCliente= null;
+                this.valorGlobal= null;
+                this.sumaItems= null;
+                this.otrosItem= null;
+                this.totalFactura= null;
+                this.tipoEnvio= null;
+                this.pesoitems= null;
+                this.altoitems= null;
+                this.anchoitems= null;
+                this.largoitems= null;
+                this.volumenitems= null;
+                this.dataItemSelect =[];
+                this.description = null;
+                this.statusSelected = null;
+                this.referencia= null;
+              })
+            },
+            (error) => {
+              console.log('error creando el manifiesto', error);
+            }
+          );
+
     }
 
     openDialogagg() {
@@ -193,6 +357,7 @@ export class IngesosManifiestoComponent
                     this.totalFactura = Number(this.totalFactura) + Number(data[0].value)
                     this.dataItemSelect.push(data[0]);
                     this.itemSelected = data[1]
+                    this.sumaItems = this.dataItemSelect.length
                     console.log(this.dataItemSelect);
                     this.dialog.closeAll();
 
@@ -259,6 +424,8 @@ export class IngesosManifiestoComponent
         this.largoitems= null;
         this.volumenitems= null;
         this.dataItemSelect =[];
+        this.description = null;
+        this.statusSelected = null;
         const loader:any = this.loadingFireToast('Consultando, por favor espere...');
         this.api.get(`seguridad/show/${this.referencia}`).subscribe(
             (res) => {
@@ -281,22 +448,24 @@ export class IngesosManifiestoComponent
 
     preAlert(){
         //${this.referencia}
-        this.api.get(`prealertreferencia/show/DRH0000002`).subscribe(
+        this.api.get(`prealertreferencia/show/${this.referencia}`).subscribe(
             (res) => {
               console.log(res);
+                this.prealertData = res.data
+                this.shipperSelected = res.data[0].nomcliente
+                const proveedor = this.proveedores.filter(p => p.nombre==res.data[0].companiadestino)
+                console.log(proveedor);
 
-              this.shipperSelected = res.data[0].nomcliente
-              const proveedor = this.proveedores.filter(p => p.nombre==res.data[0].companiadestino)
-              if(proveedor.length ==0){
-                this.proveedorSelected = 7;
-              }else{
                 this.proveedorSelected = proveedor.codproveedor
-              }
 
-              const casillero = this.casilleros.filter(c => c.nombre==res.data[0].codcasillero.slice(0, 3))
-                console.log(casillero);
 
-                if(casillero.length !=0){
+                /* const casillero = this.casilleros.filter(c => c.nombre==res.data[0].codcasillero.slice(0, 3))
+                console.log(casillero); */
+                this.casilleroSelected = res.data[0].codcasillero.slice(0, 3)
+                this.codCasillero = res.data[0].codcasillero.slice(3);
+                this.consultarCasillero()
+                this.tipoCliente = 'CASILLERO INTERNACIONAL ZOOM';
+                /* if(casillero.length !=0){
                     this.casilleroSelected = res.data[0].codcasillero.slice(0, 3)
                     this.codCasillero = res.data[0].codcasillero.slice(3);
                     this.consultarCasillero()
@@ -321,7 +490,7 @@ export class IngesosManifiestoComponent
                         }
                       );
                     this.tipoCliente = 'CASILLERO INTERNACIONAL ZOOM';
-                }
+                } */
 
 
 
@@ -366,6 +535,8 @@ export class IngesosManifiestoComponent
     }
 
     consultarCasillero(){
+        console.log(this.codCasillero);
+
         //const loader:any = this.loadingFireToast('Consultando casillero, por favor espere...');
         this.api.get(`casillero/show/${this.codCasillero}`).subscribe(
             (res) => {
@@ -373,12 +544,17 @@ export class IngesosManifiestoComponent
               console.log(this.casilleroSelected);
 
               //loader.close();
-              if(this.casilleroSelected == res?.data[0].siglas){
+              this.casillero = res.data
                 this.nombrecasillero = res.data[0].nombre
                 this.codigoCliente = res.data[0].codcliente
                 this.tipoCliente = 'CASILLERO INTERNACIONAL ZOOM'
                 this.consultarCliente()
-              }
+              /* if(this.casilleroSelected == res?.data[0].siglas){
+                this.nombrecasillero = res.data[0].nombre
+                this.codigoCliente = res.data[0].codcliente
+                this.tipoCliente = 'CASILLERO INTERNACIONAL ZOOM'
+                this.consultarCliente()
+              } */
 
             },
             (error) => {

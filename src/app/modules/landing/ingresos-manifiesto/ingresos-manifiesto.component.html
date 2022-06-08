@@ -83,7 +83,7 @@
             <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
                 <mat-form-field class="flex-auto col-span-1">
                     <mat-label>Casillero</mat-label>
-                    <select matNativeControl [(ngModel)]="casilleroSelected" name="shipper" [disabled]="proveedorSelected === undefined">
+                    <select matNativeControl [(ngModel)]="casilleroSelected" name="shipper" disabled><!-- [disabled]="proveedorSelected === undefined" -->
                         <option *ngFor="let casillero of casilleros" [value]="casillero.siglas">
                             {{casillero.siglas}}
                         </option>
@@ -91,7 +91,7 @@
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:archive'"></mat-icon>
                 </mat-form-field>
                 <mat-form-field class=" mt-6 w-full col-span-1">
-                    <input matInput (ngModelChange)="consultarCasillero()" [(ngModel)]="codCasillero" name="shipper" required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="number" max="10" (change)="consultarCasillero()" [(ngModel)]="codCasillero" name="shipper" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-2">
                     <mat-label></mat-label>
@@ -107,43 +107,43 @@
             <div class="flex grid grid-cols-10 gap-6 items-center flex-row">
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Valor global ($)</mat-label>
-                    <input matInput [(ngModel)]="valorGlobal" name="valorglobal" required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="number" max="8"  [(ngModel)]="valorGlobal" name="valorglobal" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Suma items ($)</mat-label>
-                    <input matInput [(ngModel)]="sumaItems" name="sumaitems" required disabled>
+                    <input matInput type="number" max="8"  [(ngModel)]="sumaItems" name="sumaitems" required disabled>
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Otros ($)</mat-label>
-                    <input matInput [(ngModel)]="otrosItem" (ngModelChange)="sumarTotal()" name="otro"  required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="number" max="8"  [(ngModel)]="otrosItem" (ngModelChange)="sumarTotal()" name="otro"  required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Total factura ($)</mat-label>
-                    <input matInput [(ngModel)]="totalFactura" name="totalFactura" required disabled>
+                    <input matInput type="number" max="10"  [(ngModel)]="totalFactura" name="totalFactura" required disabled>
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Tipo envio</mat-label>
-                    <input matInput [(ngModel)]="tipoEnvio" name="tipoenvio" required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="number" max="2"  [(ngModel)]="tipoEnvio" name="tipoenvio" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Peso (kg)</mat-label>
-                    <input matInput [(ngModel)]="pesoitems" name="peso" required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="number" max="3"  [(ngModel)]="pesoitems" name="peso" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Alto (cm)</mat-label>
-                    <input matInput [(ngModel)]="altoitems" name="Alto" required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="number" max="3"  [(ngModel)]="altoitems" name="Alto" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Ancho (cm)</mat-label>
-                    <input matInput [(ngModel)]="anchoitems" name="ancho" required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="number" max="3"  [(ngModel)]="anchoitems" name="ancho" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Largo (cm)</mat-label>
-                    <input matInput [(ngModel)]="largoitems" name="largo" required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="number" max="3"  [(ngModel)]="largoitems" name="largo" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Volumen (kg)</mat-label>
-                    <input matInput [(ngModel)]="volumenitems" name="volumen" required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="number" max="3"  [(ngModel)]="volumenitems" name="volumen" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
             </div>
         </div>
@@ -258,7 +258,9 @@
                 <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded fuse-mat-bold w-full">
                     <mat-label>Breve descripción</mat-label>
                     <textarea class="min-h-5 my-0 resize-none" style="margin: 11px 0 !important; padding: 0 !important;"
-                        [rows]="3" matInput #messageInput></textarea>
+                        [rows]="3"
+                        [(ngModel)]="description" name="descripcion"
+                        matInput #messageInput></textarea>
                 </mat-form-field>
             </div>
             <div class=" border-2 border-dashed border-gray-300 rounded-2xl p-5 col-span-3 grid grid-cols-6 gap-6">
