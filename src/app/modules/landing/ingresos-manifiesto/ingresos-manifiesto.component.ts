@@ -195,7 +195,26 @@ export class IngesosManifiestoComponent
     }
 
     buscarReferencia(){
-
+        this.nombrecasillero = null;
+        this.codigoCliente = null;
+        this.creacionManifiesto = null;
+        this.shipperSelected = null;
+        this.proveedorSelected = null;
+        this.casilleroSelected = null;
+        this.codCasillero    = null;
+        this.nombrecasillero= null;
+        this.tipoCliente= null;
+        this.valorGlobal= null;
+        this.sumaItems= null;
+        this.otrosItem= null;
+        this.totalFactura= null;
+        this.tipoEnvio= null;
+        this.pesoitems= null;
+        this.altoitems= null;
+        this.anchoitems= null;
+        this.largoitems= null;
+        this.volumenitems= null;
+        this.dataItemSelect =[];
         const loader:any = this.loadingFireToast('Consultando, por favor espere...');
         this.api.get(`seguridad/show/${this.referencia}`).subscribe(
             (res) => {
