@@ -70,15 +70,15 @@ export class AuthSignInComponent implements OnInit {
         console.log(this.signInForm.value);
 
         // Sign in
-       /*  this._authService.signIn(this.signInForm.value)
+        this._authService.signIn(this.signInForm.value)
              .subscribe(
-                 () => { */
+                 () => {
                     // const redirectURL = this._activatedRoute.snapshot.queryParamMap.get('redirectURL') || '/signed-in-redirect';
                     // this._router.navigateByUrl(redirectURL);
-                    localStorage.setItem('codusuario', '630');
+                   /*  localStorage.setItem('codusuario', '630');*/
                     this._router.navigate(['/home']);
 
-                /*  },
+                 },
                  (response) => {
 
             //         // Re-enable the form
@@ -96,6 +96,6 @@ export class AuthSignInComponent implements OnInit {
             //         // Show the alert
                      this.showAlert = true;
                  }
-             ); */
+             );
     }
 }

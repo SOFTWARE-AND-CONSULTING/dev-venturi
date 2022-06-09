@@ -33,6 +33,11 @@ export class AuthService
         localStorage.setItem('accessToken', token);
     }
 
+    set codUser(cod: string)
+    {
+        localStorage.setItem('codusuario', cod);
+    }
+
     get accessToken(): string
     {
         return localStorage.getItem('accessToken') ?? '';
@@ -69,6 +74,8 @@ export class AuthService
      */
     signIn(credentials: any): Observable<any>
     {
+        console.log(credentials);
+
         let {email,password,code} = credentials;
         // Throw error, if the user is already logged in
         if ( this._authenticated )
@@ -83,6 +90,7 @@ export class AuthService
 
                 // Store the access token in the local storage
                 this.accessToken = response.data[0].claveenc;
+                this.codUser = response.data[0].cod;
 
                 // Set the authenticated flag to true
                 this._authenticated = true;
