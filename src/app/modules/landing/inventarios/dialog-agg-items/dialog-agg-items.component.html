@@ -1,0 +1,102 @@
+<h2 mat-dialog-title class="title">Ingresar productos casillero</h2>
+
+<mat-dialog-content>
+    <form>
+        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+            <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
+                <mat-form-field class="flex-auto col-span-2">
+                    <mat-label>Categoría: </mat-label>
+                    <mat-select  [(ngModel)]="categoriaSelected"  name="shipper" [ngModelOptions]="{standalone: true}">
+                        <mat-option *ngFor="let categoria of categorias" (click)="buscarCategoria()" [value]="categoria.idproductocategoria">
+                        {{categoria.nombre}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class=" w-full col-span-2">
+                    <mat-label>Filtrar producto: </mat-label>
+                                <input matInput
+                                        name="filtro"
+                                        [(ngModel)]="filtroProducto"
+                                        >
+                </mat-form-field>
+                <div class="col-span-2 ">
+                    <button class="mat-raised-button mat-primary mr-3"(click)="buscarCategoria()">Buscar <mat-icon [svgIcon]="'heroicons_outline:search'"></mat-icon></button>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+            <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
+                <table mat-table [dataSource]="categoriasDetalle" class="col-span-6 mat-elevation-z3">
+                    <!-- Select Column -->
+                    <ng-container matColumnDef="select">
+                        <th mat-header-cell *matHeaderCellDef>
+                        <!-- <mat-checkbox (change)="$event ? masterToggle() : null"
+                                        [checked]="selection.hasValue() && isAllSelected()"
+                                        [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                        [aria-label]="checkboxLabel()">
+                        </mat-checkbox> -->
+                        </th>
+                        <td mat-cell *matCellDef="let row">
+                            <mat-radio-button
+                            (click)="itemSelectedCheck(row)"
+                            >
+                        </mat-radio-button>
+
+                        <!-- <mat-checkbox (click)="itemSelectedCheck(row)"
+                                        (change)="$event ? selection.toggle(row) : null"
+                                        [checked]="selection.isSelected(row)"
+                                        [aria-label]="checkboxLabel(row)">
+                        </mat-checkbox> -->
+                        </td>
+                    </ng-container>
+
+                    <!-- Position Column -->
+                    <ng-container matColumnDef="idproductocategoriadetalle">
+                        <th mat-header-cell *matHeaderCellDef> Cod. producto </th>
+                        <td mat-cell *matCellDef="let element"> {{element.idproductocategoriadetalle}} </td>
+                    </ng-container>
+
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="nombre">
+                        <th mat-header-cell *matHeaderCellDef> Nombre en inglés </th>
+                        <td mat-cell *matCellDef="let element"> {{element.nombre.split('(')[0]}} </td>
+                    </ng-container>
+
+                    <!-- Weight Column -->
+                    <ng-container matColumnDef="descripcionpais">
+                        <th mat-header-cell *matHeaderCellDef> Nombre en español </th>
+                        <td mat-cell *matCellDef="let element"> {{element.nombre.split('(')[1].split(')')[0]}} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </div>
+        </div>
+        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+            <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
+                <mat-form-field class="flex-auto col-span-1">
+                    <mat-label>Nro piezas</mat-label>
+                    <input matInput  [(ngModel)]="noPiezas" name="noPiezas" required>
+                </mat-form-field>
+                <mat-form-field class=" w-full col-span-4">
+                    <mat-label>Descripción</mat-label>
+                    <input matInput [(ngModel)]="descripcion" name="descripcion"  disabled>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-1">
+                    <mat-label>Valor ($)</mat-label>
+                    <input matInput [(ngModel)]="valor" name="valor" required>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button class="mat-raised-button mat-primary mr-3"(click)="save()">Aceptar <mat-icon [svgIcon]="'heroicons_outline:check-circle'"></mat-icon></button>
+    <button class="mat-raised-button mat-primary mr-3"(click)="clean()">Limpiar <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon></button>
+    <button class="mat-raised-button"(click)="close()">Close <mat-icon [svgIcon]="'mat_outline:close'"></mat-icon></button>
+
+</mat-dialog-actions>

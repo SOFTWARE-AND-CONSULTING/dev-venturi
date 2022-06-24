@@ -62,6 +62,7 @@ export const appRoutes: Route[] = [
         children   : [
             {path: 'home', loadChildren: () => import('app/modules/landing/home/home.module').then(m => m.LandingHomeModule)},
             {path: 'ingresos-manifiesto', loadChildren: () => import('app/modules/landing/ingresos-manifiesto/ingresos-manifiesto.module').then(m => m.IngesosManifiestoModule)},
+            {path: 'inventarios', loadChildren: () => import('app/modules/landing/inventarios/inventarios.module').then(m => m.InventariosModule)},
         ]
     },
 

@@ -9,12 +9,12 @@ import * as moment from 'moment';
 import { DialogAggItemsComponent } from './dialog-agg-items/dialog-agg-items.component';
 
 @Component({
-    selector     : 'ingresos-manifiesto',
-    templateUrl  : './ingresos-manifiesto.component.html',
+    selector     : 'inventarios',
+    templateUrl  : './inventarios.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-export class IngesosManifiestoComponent
+export class InventariosComponent
 {
 
     items: any = [

@@ -2,7 +2,7 @@
     <div class="mt-2 mb-5">
         <mat-icon (click)="goBack()" class="cursor-pointer icon-size-8 text-primary" [svgIcon]="'mat_outline:arrow_back'"></mat-icon>
         <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-            Ingresos por manifiestos
+            Inventario
         </h2>
     </div>
     <div class="flex flex-col gap-6 p-5 rounded-2xl shadow overflow-y-auto bg-card h-36rem" cdkScrollable>
@@ -52,14 +52,15 @@
                 </div>
             </div>
         </div>
+        <span>Seleccionar proceso</span>
         <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
             <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
                 <mat-form-field class="w-full col-span-2">
-                    <mat-label>Referencia</mat-label>
+                    <mat-label>Unidad</mat-label>
                     <input matInput [(ngModel)]="referencia" (change)="buscarReferencia()" required>
                 </mat-form-field>
                 <mat-form-field class="flex-auto col-span-2">
-                    <mat-label>Origen</mat-label>
+                    <mat-label>Proceso</mat-label>
                     <input matInput [(ngModel)]="shipperSelected" readonly>
                     <!-- <select matNativeControl [placeholder]="'Seleccione'">
                         <option value=""></option>
@@ -69,7 +70,7 @@
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:location-marker'"></mat-icon>
                 </mat-form-field>
                 <mat-form-field class="flex-auto col-span-2">
-                    <mat-label>Remitente</mat-label>
+                    <mat-label>Sub-proceso</mat-label>
                     <select matNativeControl [(ngModel)]="proveedorSelected" name="remitente" [disabled]="shipperSelected === undefined">
                         <option *ngFor="let proveedor of proveedores" [value]="proveedor.codproveedor" >
                             {{proveedor.nombre}}
@@ -79,8 +80,26 @@
                 </mat-form-field>
             </div>
         </div>
+        <span>Ingrese los datos</span>
         <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+
+            <div class="flex grid grid-cols-12 gap-12 items-center flex-row">
+                <mat-form-field class="flex-auto col-span-12">
+                    <mat-label>Estatus</mat-label>
+                    <select matNativeControl [(ngModel)]="casilleroSelected" name="shipper" disabled><!-- [disabled]="proveedorSelected === undefined" -->
+                        <option *ngFor="let casillero of casilleros" [value]="casillero.siglas">
+                            {{casillero.siglas}}
+                        </option>
+                    </select>
+                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:archive'"></mat-icon>
+                </mat-form-field>
+            </div>
             <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
+
+                <mat-form-field class="  w-full col-span-2">
+                    <mat-label>Envío</mat-label>
+                    <input matInput type="number" max="10" (change)="consultarCasillero()" [(ngModel)]="codCasillero" name="shipper" required [disabled]="casilleroSelected === undefined">
+                </mat-form-field>
                 <mat-form-field class="flex-auto col-span-1">
                     <mat-label>Casillero</mat-label>
                     <select matNativeControl [(ngModel)]="casilleroSelected" name="shipper" disabled><!-- [disabled]="proveedorSelected === undefined" -->
@@ -90,16 +109,13 @@
                     </select>
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:archive'"></mat-icon>
                 </mat-form-field>
-                <mat-form-field class=" mt-6 w-full col-span-1">
-                    <input matInput type="number" max="10" (change)="consultarCasillero()" [(ngModel)]="codCasillero" name="shipper" required [disabled]="casilleroSelected === undefined">
-                </mat-form-field>
-                <mat-form-field class="w-full col-span-2">
+                <mat-form-field class="w-full col-span-1">
                     <mat-label></mat-label>
                     <input matInput [(ngModel)]="nombrecasillero" readonly >
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-2">
-                    <mat-label>Tipo cliente</mat-label>
-                    <input matInput [(ngModel)]="tipoCliente"  readonly>
+                    <mat-label></mat-label>
+                    <input matInput [(ngModel)]="nombrecasillero" readonly >
                 </mat-form-field>
             </div>
         </div>
@@ -148,7 +164,7 @@
             </div>
         </div>
         <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
-            <div class="flex grid grid-cols-10 gap-6 items-center flex-row">
+            <div class="flex grid grid-cols-12 gap-12 items-center flex-row">
                 <!-- <div class="col-span-3 grid grid-cols-4 gap-6">
                     <label class="col-span-4">Validación de factura comercial</label>
                     <mat-form-field class="w-full col-span-2">
@@ -179,7 +195,7 @@
                         </select>
                     </mat-form-field>
                 </div> -->
-                <div class="col-span-12 grid grid-cols-12 gap-12">
+                <div class="col-span-10 grid grid-cols-10 gap-10">
                     <table  class="col-span-8 mat-elevation-z3">
                         <!--
                         <ng-container matColumnDef="no">
@@ -222,7 +238,7 @@
                             </tr>
                           </tbody>
                     </table>
-                    <div class="col-span-4 grid gap-6">
+                    <div class="col-span-2 grid gap-2">
                         <button mat-flat-button color="primary" (click)="openDialogagg()" [disabled]="casilleroSelected === undefined">
                             Agregar
                             <mat-icon [svgIcon]="'heroicons_outline:plus-sm'"></mat-icon>
@@ -237,50 +253,29 @@
                         </button>
                     </div>
                 </div>
-                <div class="col-span-5 grid grid-cols-6 gap-6">
-                    <div class="col-span-6 grid grid-cols-2">
-                       <!--  <span class="col-span-2">Total items: 0</span>
-                        <span class="col-span-2">Items permitidos: 0</span> -->
-                    </div>
-                </div>
+
             </div>
         </div>
-        <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
-            <div class="col-span-3 border-2 border-dashed border-gray-300 rounded-2xl p-5">
-                <mat-form-field class="flex-auto w-full">
-                    <mat-label>Status</mat-label>
-                    <select matNativeControl [(ngModel)]="statusSelected" name="remitente" >
-                        <option *ngFor="let status of statusPais" [value]="status?.codestatus" >
-                            {{status?.siglas}}
-                        </option>
-                    </select>
-                </mat-form-field>
-                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded fuse-mat-bold w-full">
-                    <mat-label>Breve descripción</mat-label>
+        <div class="flex grid grid-cols-12 gap-12 items-center flex-row">
+            <div class="col-span-12 border-2 border-dashed border-gray-300 rounded-2xl p-5">
+
+                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded fuse-mat-bold w-full col-span-2">
+                    <mat-label>Observación</mat-label>
                     <textarea class="min-h-5 my-0 resize-none" style="margin: 11px 0 !important; padding: 0 !important;"
                         [rows]="3"
                         [(ngModel)]="description" name="descripcion"
                         matInput #messageInput></textarea>
                 </mat-form-field>
-            </div>
-            <!--<div class=" border-2 border-dashed border-gray-300 rounded-2xl p-5 col-span-3 grid grid-cols-6 gap-6">
-                 <label class="col-span-6">Solo para desconocidos</label>
-                <mat-form-field class="flex-auto col-span-3">
-                    <mat-label>Unit number</mat-label>
+                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded fuse-mat-bold w-full col-span-2">
+                    <mat-label>Repacking</mat-label>
                     <select matNativeControl disabled [placeholder]="'Seleccione'">
                         <option value=""></option>
                         <option value="select1-2">--</option>
                         <option value="select1-3">--</option>
                     </select>
                 </mat-form-field>
-                <mat-form-field class="w-full col-span-3">
-                    <mat-label>Nro rack</mat-label>
-                    <input matInput disabled required>
-                </mat-form-field>
-                <mat-checkbox class="flex items-center h-10 min-h-10 col-span-3" disabled [color]="'primary'">
-                    Marca de envío especial
-                </mat-checkbox>
-            </div>-->
+            </div>
+
         </div>
 
         <div class="flex flex-row justify-center gap-6">
