@@ -8,12 +8,15 @@ import Swal from 'sweetalert2';
 import * as moment from 'moment';
 import { DialogAggItemsComponent } from './dialog-agg-items/dialog-agg-items.component';
 
+
+type itemList = [no?:string, description?:string, value?:string];
 @Component({
     selector     : 'ingresos-manifiesto',
     templateUrl  : './ingresos-manifiesto.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
+
 export class IngesosManifiestoComponent
 {
 
@@ -64,6 +67,10 @@ export class IngesosManifiestoComponent
     description: any;
     noPiezas: number=0;
     prealertData: any;
+    allowClosed: boolean = false;
+
+    itemSelectedList:any = [];
+    selectAll:boolean=false;
     /**
      * Constructor
      */
@@ -358,6 +365,7 @@ export class IngesosManifiestoComponent
 
                 if(data != undefined){
                     this.totalFactura = Number(this.totalFactura) + Number(data[0].value)
+                    data[0].selected = false;
                     this.dataItemSelect.push(data[0]);
                     this.itemSelected = data[1]
                     this.sumaItems = this.dataItemSelect.length
@@ -455,7 +463,7 @@ export class IngesosManifiestoComponent
             (res) => {
               console.log(res);
                 this.prealertData = res.data
-                this.shipperSelected = res.data[0].nomcliente
+                this.shipperSelected = res.data[0]?.nomcliente
                 const proveedor = this.proveedores.filter(p => p.nombre==res.data[0].companiadestino)
                 console.log(proveedor);
 
@@ -606,6 +614,110 @@ export class IngesosManifiestoComponent
               console.log('error enviando la observación', error);
             }
           );
+    }
+
+    verifyItemSelected(tipo:any, itemSelected:any){
+        if(tipo==2){
+            this.dataItemSelect.forEach(c=>{
+                if(c.description===itemSelected.description){
+                    console.log(c.selected)
+                    if(c.selected){
+                        if(this.itemSelectedList?.length == 0){
+                            this.itemSelectedList.push(c)
+                        }else{
+                            this.itemSelectedList.forEach(async(el:any) => {
+                                if(el.description===c.description){
+                                    return
+                                }else{
+                                    this.itemSelectedList.push(c)
+                                }
+
+                            });
+                        }
+
+                    }else{
+                        console.log(this.itemSelectedList, 'false')
+                        this.itemSelectedList = this.itemSelectedList.filter((con:any) => con.description!==c.description)
+                        console.log(this.itemSelectedList, 'false')
+                    }
+
+                }
+            }
+                );
+                console.log(this.itemSelectedList, this.dataItemSelect)
+
+          }else if(tipo==1){
+            console.log(this.selectAll);
+            this.dataItemSelect.forEach(async(c:any)=>{
+                    c.selected = this.selectAll ? true : false;
+                    this.selectAll ? this.itemSelectedList.push(c) : this.itemSelectedList = [];
+              })
+              console.log(this.itemSelectedList);
+          }
+    }
+
+    modifyItem(){
+        console.log(this.itemSelectedList)
+        const dialogConfig = new MatDialogConfig();
+
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+
+        dialogConfig.data = {
+            id: 1,
+            valorGlobal: this.valorGlobal,
+            otro: this.totalFactura,
+            no: this.itemSelectedList[0].no,
+            description: this.itemSelectedList[0].description,
+            value: this.itemSelectedList[0].value,
+            idCategoria: this.itemSelectedList[0].idCategoria,
+        };
+        this.dataItemSelect = this.dataItemSelect.filter(el => el.description !==this.itemSelectedList.description)
+        this.dialog.open(DialogAggItemsComponent, dialogConfig);
+
+        const dialogRef = this.dialog.open(DialogAggItemsComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe(
+            data => {
+                console.log(data);
+
+
+                if(data != undefined){
+                    this.totalFactura = Number(this.totalFactura) + Number(data[0].value)
+                    this.dataItemSelect.push(data[0]);
+                    this.itemSelected = data[1]
+                    this.sumaItems = this.dataItemSelect.length
+                    console.log(this.dataItemSelect);
+                    this.dialog.closeAll();
+
+                }else{
+                    this.dialog.closeAll();
+                }
+
+
+            }
+        );
+    }
+
+    deleteItem(){
+        if(this.selectAll){
+            this.itemSelectedList.forEach(el => {
+                this.totalFactura = this.totalFactura - Number(el.value)
+            })
+            this.dataItemSelect = [];
+            this.itemSelectedList = []
+            this.selectAll=false;
+
+        }else {
+            this.itemSelectedList.forEach(el => {
+                this.totalFactura = this.totalFactura - Number(el.value),
+                this.dataItemSelect= this.dataItemSelect.filter(c => c !== el)
+                console.log(this.dataItemSelect)
+                this.selectAll=false;
+
+            })
+
+        }
     }
 
     goBack(){

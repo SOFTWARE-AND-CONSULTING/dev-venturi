@@ -33,16 +33,24 @@ export class DialogAggItemsComponent implements OnInit {
   ) {
     this.valorGlobal = data.valorGlobal;
     this.itemOtro = data.otro;
+    this.noPiezas = data?.no;
+    this.descripcion = data?.description;
+    this.valor = data?.value;
+    this.categoriaSelected = data?.idCategoria
    }
 
   ngOnInit(): void {
-        console.log(this.valorGlobal, this.itemOtro);
+        console.log(this.valorGlobal, this.itemOtro, this.valor, this.descripcion, this.noPiezas);
+
 
      /* Traer categorías */
      this.api.get(`producto/show_productocategorias`).subscribe(
         (res) => {
           this.categorias = res.data
           console.log(this.categorias);
+          if(this.categoriaSelected){
+            this.buscarCategoria()
+        }
 
         },
         (error) => {
@@ -85,6 +93,7 @@ export class DialogAggItemsComponent implements OnInit {
             {   no: this.noPiezas,
                 description: this.descripcion,
                 value: this.valor,
+                idCategoria: this.categoriaSelected
 
             },
             this.itemSelected
@@ -127,7 +136,8 @@ export class DialogAggItemsComponent implements OnInit {
         }else{
             this.api.get(`producto/show_productocategoriadetalles/${this.categoriaSelected}`).subscribe(
                 (res) => {
-                    this.categoriasDetalle = res.data
+                    this.categoriasDetalle = this.descripcion ? res.data.filter((c:any) => c.nombre.toLowerCase().includes(this.descripcion.toLowerCase())) : res.data;
+                    this.categoriasDetalle.selected = this.descripcion ? true : false
                     console.log(this.categoriasDetalle);
 
                 },

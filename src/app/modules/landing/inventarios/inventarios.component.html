@@ -57,23 +57,27 @@
             <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
                 <mat-form-field class="w-full col-span-2">
                     <mat-label>Unidad</mat-label>
-                    <input matInput [(ngModel)]="referencia" (change)="buscarReferencia()" required>
+                    <select matNativeControl [(ngModel)]="unidad" name="unidad" (change)="traerProcesos()">
+                        <option *ngFor="let unidad of unidades" [value]="unidad.codestatusunidad" >
+                            {{unidad.nombre}}
+                        </option>
+                    </select>
+                    <!-- <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:user'"></mat-icon> -->
                 </mat-form-field>
                 <mat-form-field class="flex-auto col-span-2">
                     <mat-label>Proceso</mat-label>
-                    <input matInput [(ngModel)]="shipperSelected" readonly>
-                    <!-- <select matNativeControl [placeholder]="'Seleccione'">
-                        <option value=""></option>
-                        <option value="select1-2">--</option>
-                        <option value="select1-3">--</option>
-                    </select> -->
-                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:location-marker'"></mat-icon>
+                    <select matNativeControl [(ngModel)]="proecesoSelected" name="proceso"  (click)="subProcesos = []" (change)="traerSubProcesos()">
+                        <option *ngFor="let proceso of procesos" [value]="proceso.codestatusproceso" >
+                            {{proceso.nombre}}
+                        </option>
+                    </select>
+                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:user'"></mat-icon>
                 </mat-form-field>
                 <mat-form-field class="flex-auto col-span-2">
                     <mat-label>Sub-proceso</mat-label>
-                    <select matNativeControl [(ngModel)]="proveedorSelected" name="remitente" [disabled]="shipperSelected === undefined">
-                        <option *ngFor="let proveedor of proveedores" [value]="proveedor.codproveedor" >
-                            {{proveedor.nombre}}
+                    <select matNativeControl [(ngModel)]="subProcesoSelected" name="subProceso" (change)="traerStatus()">
+                        <option *ngFor="let sub of subProcesos" [value]="sub.codestatussubproceso" >
+                            {{sub.nombre}}
                         </option>
                     </select>
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:user'"></mat-icon>
@@ -86,9 +90,9 @@
             <div class="flex grid grid-cols-12 gap-12 items-center flex-row">
                 <mat-form-field class="flex-auto col-span-12">
                     <mat-label>Estatus</mat-label>
-                    <select matNativeControl [(ngModel)]="casilleroSelected" name="shipper" disabled><!-- [disabled]="proveedorSelected === undefined" -->
-                        <option *ngFor="let casillero of casilleros" [value]="casillero.siglas">
-                            {{casillero.siglas}}
+                    <select matNativeControl [(ngModel)]="estatusSelected" name="estatus" [disabled]="subProcesoSelected === undefined"><!-- [disabled]="proveedorSelected === undefined" -->
+                        <option *ngFor="let sta of estatus" [value]="sta.codestatus">
+                            {{sta.nombre}}
                         </option>
                     </select>
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:archive'"></mat-icon>
@@ -98,15 +102,11 @@
 
                 <mat-form-field class="  w-full col-span-2">
                     <mat-label>Envío</mat-label>
-                    <input matInput type="number" max="10" (change)="consultarCasillero()" [(ngModel)]="codCasillero" name="shipper" required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="number" max="10" (change)="consultarCasillero()" [(ngModel)]="codCasillero" name="shipper" required>
                 </mat-form-field>
                 <mat-form-field class="flex-auto col-span-1">
                     <mat-label>Casillero</mat-label>
-                    <select matNativeControl [(ngModel)]="casilleroSelected" name="shipper" disabled><!-- [disabled]="proveedorSelected === undefined" -->
-                        <option *ngFor="let casillero of casilleros" [value]="casillero.siglas">
-                            {{casillero.siglas}}
-                        </option>
-                    </select>
+                    <input matInput type="number" max="10"  [(ngModel)]="codCasillero" name="shipper" required>
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:archive'"></mat-icon>
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">

@@ -203,6 +203,16 @@
                         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> -->
                         <thead>
                             <tr class="text-center tr-table">
+                              <th>
+                                <div class="form-check form-switch"><input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="flexSwitchCheckDefault1"
+                                [disabled]="dataItemSelect.length ===0"
+                                name="check1"
+                                [(ngModel)]="selectAll"
+                                (change)="verifyItemSelected(1, null)"
+                              /></div></th>
                               <th scope="col">No. piezas</th>
                               <th scope="col">Descripción</th>
                               <th scope="col">Valor</th>
@@ -213,6 +223,17 @@
                               *ngFor="let item of dataItemSelect"
                               class="text-center tr-table"
                             >
+                              <td>
+                                <div class="form-check form-switch">
+                                    <input
+                                      class="form-check-input"
+                                      type="checkbox"
+                                      id="flexSwitchCheckDefault"
+                                      [(ngModel)]="item.selected"
+                                      (change)="verifyItemSelected(2, item)"
+                                    />
+                                  </div>
+                              </td>
                               <td>{{ item.no }}</td>
                               <td>
                                 {{item.description}}
@@ -227,11 +248,11 @@
                             Agregar
                             <mat-icon [svgIcon]="'heroicons_outline:plus-sm'"></mat-icon>
                         </button>
-                        <button mat-flat-button color="accent" [disabled]="casilleroSelected === undefined">
+                        <button mat-flat-button color="accent" (click)="modifyItem()" [disabled]="itemSelectedList?.length !== 1">
                             Modificar
                             <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
                         </button>
-                        <button mat-flat-button color="warn" [disabled]="casilleroSelected === undefined">
+                        <button mat-flat-button color="warn" [disabled]="itemSelectedList?.length === 0" (click)="deleteItem()">
                             Eliminar
                             <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
                         </button>
