@@ -79,7 +79,7 @@ export class InventariosComponent
     constructor(
         private router: Router,
         private dialog: MatDialog,
-        private api: ApiService
+        public api: ApiService
         )
     {
     }
@@ -527,6 +527,10 @@ export class InventariosComponent
 
     goBack(){
         this.router.navigate(['/home'])
+    }
+
+    cerrarSideBar(){
+        this.api.sidebar = !this.api.sidebar
     }
 
     loadingFireToast(title:any) {

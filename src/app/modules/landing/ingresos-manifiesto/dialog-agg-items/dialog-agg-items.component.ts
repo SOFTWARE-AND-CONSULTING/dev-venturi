@@ -80,7 +80,7 @@ export class DialogAggItemsComponent implements OnInit {
             cancelButtonColor: '#d33',
             confirmButtonText: 'OK',
           })
-      }else if(Number(this.valorGlobal) < (Number(this.valor)+Number(this.itemOtro))){
+      }else if(Number(this.itemOtro) < (Number(this.valor)+Number(this.valorGlobal))){
         Swal.fire({
             title: 'El valor digitado supera el valor global',
             icon: 'info',

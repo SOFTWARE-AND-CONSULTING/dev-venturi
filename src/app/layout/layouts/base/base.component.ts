@@ -1,4 +1,6 @@
 import { Component, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
+import { ApiService } from 'app/modules/landing/services/api.service';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -13,8 +15,18 @@ export class BaseLayoutComponent implements OnDestroy
     /**
      * Constructor
      */
-    constructor()
+    constructor(public apiService:ApiService, private _router: Router)
     {
+    }
+
+    cerrarSideBar(){
+        this.apiService.sidebar = !this.apiService.sidebar
+    }
+
+    salir(){
+        localStorage.removeItem('codusuario');
+        localStorage.removeItem('accessToken');
+        this._router.navigate(['']);
     }
 
     // -----------------------------------------------------------------------------------------------------

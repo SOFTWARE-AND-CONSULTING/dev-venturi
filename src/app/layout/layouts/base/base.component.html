@@ -1,8 +1,17 @@
 <!-- Loading bar -->
 <fuse-loading-bar></fuse-loading-bar>
 
-<div class="flex grid grid-cols-6 flex-row items-center justify-center w-full h-full">
-    <div class="col-span-1 box-left h-full p-5 flex flex-col items-center justify-around">
+<div class="flex grid grid-cols-6 flex-row items-center justify-center w-full h-full" >
+
+    <p class="col-span-6 " *ngIf="!apiService.sidebar">
+        <mat-toolbar color="primary">
+            <button mat-icon-button color="primary" class="example-icon" (click)="cerrarSideBar()" aria-label="Example icon-button with menu icon">
+             <mat-icon>menu</mat-icon>
+           </button>
+         </mat-toolbar>
+    </p>
+    <div class="col-span-1 box-left h-full p-5 flex flex-col items-center justify-around" *ngIf="apiService.sidebar">
+        <mat-icon class="ml-2 icon-size-10 cursor-pointer" [svgIcon]="'heroicons_solid:menu'" (click)="cerrarSideBar()"></mat-icon>
         <img class="w-30" src="../../../../assets/images/logo/logo-zoom.png">
         <div class="mt-5">
             <h3><strong>Usuario:</strong> Mary Guevara</h3>
@@ -10,18 +19,18 @@
         </div>
         <img class="w-50" src="../../../../assets/images/ui/scene-1.svg">
         <div>
-          <a mat-flat-button class="flex flex-row items-center mt-5" [routerLink]="''">
+          <a mat-flat-button class="flex flex-row items-center mt-5" [routerLink]="''" >
               <span>Ayuda</span>
               <mat-icon class="ml-2 icon-size-5" [svgIcon]="'heroicons_outline:hand'"></mat-icon>
           </a>
-            <a class="mt-8" mat-flat-button [color]="'primary'" [routerLink]="''">
+            <a class="mt-8" mat-flat-button [color]="'primary'"  (click)="salir()">
                 <span>Salir</span>
                 <mat-icon class="ml-2 icon-size-5" [svgIcon]="'heroicons_solid:arrow-narrow-left'"></mat-icon>
             </a>
         </div>
     </div>
-    <div class="col-span-5 p-5 w-full">
+    <div [class]="apiService.sidebar? 'col-span-5 p-5 w-full' : 'col-span-6 p-5 w-full'  ">
         <router-outlet *ngIf="true"></router-outlet>
     </div>
 </div>
-        
+

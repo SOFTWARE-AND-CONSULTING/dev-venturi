@@ -86,11 +86,12 @@ export class AuthService
         return this._httpClient.get(`${environment.url_api}${constants.GET_LOGIN}${email}/${password}/${code}`).pipe(
         //return this._httpClient.post(`api/auth/sign-in`, credentials).pipe(
             switchMap((response: any) => {
-                console.log(response);
+                console.log(response.data[0].codusuario);
 
                 // Store the access token in the local storage
                 this.accessToken = response.data[0].claveenc;
-                this.codUser = response.data[0].cod;
+                localStorage.setItem('codusuario', response.data[0].codusuario);
+                //this.codUser = response.data[0].cod;
 
                 // Set the authenticated flag to true
                 this._authenticated = true;

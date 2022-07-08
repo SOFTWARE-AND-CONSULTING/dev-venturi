@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
@@ -6,7 +6,13 @@ import { DialogManifiestoComponent } from './dialog-manifiesto/dialog-manifiesto
 import { ApiService } from '../services/api.service'
 import Swal from 'sweetalert2';
 import * as moment from 'moment';
+import axios from "axios";
 import { DialogAggItemsComponent } from './dialog-agg-items/dialog-agg-items.component';
+import {
+    MatSnackBar,
+    MatSnackBarHorizontalPosition,
+    MatSnackBarVerticalPosition,
+  } from '@angular/material/snack-bar';
 
 
 type itemList = [no?:string, description?:string, value?:string];
@@ -19,6 +25,7 @@ type itemList = [no?:string, description?:string, value?:string];
 
 export class IngesosManifiestoComponent
 {
+    @ViewChild("myInput") inputEl: ElementRef;
 
     items: any = [
         {id: 1, label: 'Taquilla', icon:'mat_outline:storefront'},
@@ -30,7 +37,7 @@ export class IngesosManifiestoComponent
         {id: 7, label: 'Reportes', icon:'heroicons_outline:document-report'},
         {id: 8, label: 'Mantenimiento', icon:'mat_outline:settings'},
     ];
-    itemSelected: any;
+    itemSelected:any = [];
     visible: boolean = true;
     /* Defining the columns that will be displayed in the table. */
     displayedColumns: string[] = ['no', 'description', 'value'];
@@ -71,20 +78,29 @@ export class IngesosManifiestoComponent
 
     itemSelectedList:any = [];
     selectAll:boolean=false;
+    ipCliente: any;
+    sumatoriaItems: number = 0;
+    horizontalPosition : MatSnackBarHorizontalPosition = 'start' ;
+    verticalPosition: MatSnackBarVerticalPosition = 'top' ;
     /**
      * Constructor
      */
     constructor(
         private router: Router,
         private dialog: MatDialog,
-        private api: ApiService
+        public api: ApiService,
+        private _snackBar: MatSnackBar,
         )
     {
     }
 
     ngOnInit(): void{
        this.codUser = localStorage.getItem('codusuario');
-
+       this.getIpClient();
+       var currentTime = new Date();
+       console.log(currentTime.toString())
+       const hora = (currentTime.getHours() < 10 ? 0 + `${currentTime.getHours()}` : currentTime.getHours()) +':'+ (currentTime.getMinutes() < 10 ? 0 + `${currentTime.getMinutes()}` : currentTime.getMinutes())+':'+ (currentTime.getSeconds() < 10 ? 0 + `${currentTime.getSeconds()}` : currentTime.getSeconds());
+       console.log(hora)
        /* Traer casilleros */
        this.api.get(`casillero/show_siglas`).subscribe(
         (res) => {
@@ -154,16 +170,38 @@ export class IngesosManifiestoComponent
         return Math.floor(Math.pow(10, n-1) + Math.random() * (Math.pow(10, n) - Math.pow(10, n-1) - 1));
       }
 
-    crearManifiestoForm(){
+    async crearManifiestoForm(){
+        let items:any = []
+        let descriptionItems:string='';
         const fecha = moment().format('YYYY-MM-DD')
         var currentTime = new Date();
+        console.log(this.dataItemSelect,this.itemSelected, this.prealertData)
         this.dataItemSelect.forEach((item) => {
            this.noPiezas = this.noPiezas+ Number(item.no)})
-        const hora = currentTime.getHours()+':'+currentTime.getMinutes()+':'+currentTime.getSeconds()
+        const hora = (currentTime.getHours() < 10 ? 0 + `${currentTime.getHours()}` : currentTime.getHours()) +':'+ (currentTime.getMinutes() < 10 ? 0 + `${currentTime.getMinutes()}` : currentTime.getMinutes())+':'+ (currentTime.getSeconds() < 10 ? 0 + `${currentTime.getSeconds()}` : currentTime.getSeconds());
+        console.log(hora)
         const codguia = this.randomInteger(8);
+        this.dataItemSelect.forEach((item:any, index) => {
+            items.push(
+            {
+                codguiaprealertdetalle: `${this.prealertData ? (this.prealertData[0].codguiaprealertdetalle!=null ? this.prealertData[0].codguiaprealertdetalle : '1')  : '1'}`,
+                referencia: `${this.referencia}`,
+                codcasillero: `${this.casillero[0].codcasillero}`,
+                descripcion: `${this.itemSelected[index]?.descripcionpais}`,
+                valordeclarado: `${this.valorGlobal}`,
+                cantidaditem: `${this.dataItemSelect.length}`,
+                anulada: "f",
+                fechacre: `${this.prealertData ? (this.prealertData[0].fechacredetalle!= null ? this.prealertData[0].fechacredetalle : fecha) : fecha}`,
+                codtipoprealertmod: `${this.prealertData ? (this.prealertData[0].fechacredetalle=!null ? this.prealertData[0].fechacredetalle : fecha) : fecha}`,
+                fechamod:  `${fecha}`,
+                codguiaprealertdetext: `${this.prealertData ? (this.prealertData[0].codguiaprealertdetext != 0 ? this.prealertData[0].codguiaprealertdetext : codguia) : codguia}`
+            })
+            descriptionItems = descriptionItems+`${this.itemSelected[index]?.descripcionpais}, `
+
+        })
+
         const params = {
-            codguia: '98765489',
-            codciudadoriope: "424",
+            codciudadoriope: `${this.dataUser[0].codciudadcon}`,
             fecha: `${fecha}`,
             fechapro: `${fecha}`,
             codoficinaori: `${this.dataUser[0].codoficina}`,
@@ -174,11 +212,11 @@ export class IngesosManifiestoComponent
             codcliente: `${this.dataUser[0].codcliente}`,
             coddestinatario: `${this.casillero[0].codcasillero}`,
             destinatario: `${this.casillero[0].siglas}${this.casillero[0].codcasillero}`,
-            direcciondes: `${this.casillero[0].direccionobl}`,
+            direcciondes: `${this.casillero[0].codcasillero}`,
             contactodes: `${this.casillero[0].nombre}`,
             codciudaddes: `${this.dataUser[0].codciudadcon}`,
             telefonodes: "0412-6098042",
-            codtipoenv: `${this.tipoEnvio}`,
+            codtipoenv: "2",//
             numeropie: "1",
             pesovol: `${this.volumenitems}`,
             pesobru: `${this.pesoitems}`,
@@ -187,31 +225,31 @@ export class IngesosManifiestoComponent
             subtotori: "0",
             otrosori: `${this.otrosItem}`,
             totalpag: `${this.totalFactura}`,
-            mercancia: `${this.itemSelected.idproductocategoriadetalle}`,
+            mercancia:  `${this.totalFactura}`, // es el valor de total factura
             codservicio: `${this.casillero[0].codservicio}`,
-            codpaisdes: `${this.itemSelected.codigodescripcionpais}`,
+            codpaisdes: `${this.casillero[0].codcasillero}`,
             codtipopag: "1",
             referencia: `${this.referencia}`,
             codoficinaope: `${this.casillero[0].codoficina}`,
             descuentoemp: "f",
             codestatus: `${this.statusSelected}`,
-            descripcioncon: `${this.itemSelected.descripcionpais}`,
+            descripcioncon: descriptionItems, //concatenación de los item  descripcion país
             anulada: "f",
             cortesia: "f",
-            codusuario: `${this.codUser}`,
+            codusuario: `${this.codUser}`,//
             codestaciondes: `${this.casillero[0].codoficina}`,
             descuento: "0",
             fechaing: `${fecha}`,
             costobas: "0",
             costoadi: "0",
-            ciudaddesint: "NULL",
+            ciudaddesint: "0",
             codmanifiesto: "0",
             largo: `${this.altoitems}`,
             ancho: `${this.anchoitems}`,
             alto: `${this.largoitems}`,
             dimensiones: `${this.anchoitems}x${this.largoitems}x${this.altoitems}`,
             codshipper: `${this.creacionManifiesto}`,
-            direccionip: "",
+            direccionip: this.ipCliente,
             codagente: "0",
             cantidad25: "0",
             otrosdes: "0",
@@ -219,9 +257,9 @@ export class IngesosManifiestoComponent
             codruta: "0",
             observacion: `${this.description}`,
             codtipopes: "2",
-            hora: "NULL",
+            hora: "0",
             horareal: `${hora}`,
-            fechahorareal: "NULL",
+            fechahorareal: "0",
             casilleroexcento: "f",
             guiaelectronica: "f",
             nummedioskilos: "6",
@@ -229,110 +267,111 @@ export class IngesosManifiestoComponent
             seguro: "5",
             otros: `${this.otrosItem}`,
             total: `${this.totalFactura}`,
-            fechamod: "",
-            codguiadet: "",
+            fechamod: `${fecha}`,
+            codguiadet: "0",
             basico: "12",
             adicional: "2",
-            codproducto: `${this.itemSelected.idproductocategoriadetalle}`,
+            codproducto: `${this.itemSelected[0].codigodescripcionpais}`,
             descuentobas: "0",
             descuentosob: "0",
-            tipocarga: "MBV",
+            tipocarga: `${this.tipoEnvio}`,
             gastosaduanal: "0",
-            tiporef: "NULL",
-            nomcliente: "NULL",
+            tiporef: "0",
+            nomcliente: "0",
             tlfemisor: "NULL",
-            direccionemisor: "NULL",
-            ciudademisor: "NULL",
+            direccionemisor: "0",
+            ciudademisor: "0",
             paisorigen: "VENEZUELA",
             siglaspaisori: "VE",
-            direcciondestino: "NULL",
-            companiadestino: "NULL",
+            direcciondestino: "0",
+            companiadestino: "0",
             nombredestino: `${this.casillero[0].nombre}`,
-            telefonodestino: `${this.casillero[0].telefonoobl}`,
-            ciudaddestino: "NULL",
+            telefonodestino: "0",
+            ciudaddestino: "0",
             paisdestino: "VENEZUELA",
             codpaisori:"1",
             siglaspaisdes: "VE",
-            zipcode: "NULL",
-            suburbs: "NULL",
+            zipcode: "0",
+            suburbs: "0",
             codcasillero: `${this.casillero[0].siglas}${this.casillero[0].codcasillero}`,
             npiezas: `${this.noPiezas}`,
             pesob: "0.75",
             depth: "0",
-            descripcion: `${this.itemSelected.descripcionpais}`,
+            descripcion: descriptionItems, // concatenacion de todos los items
             valordeclarado: `${this.valorGlobal}`,
             cantidadasegurada: `${this.noPiezas}`,
             tiposeguro: "Y",
             tipoenv: "P",
             retenido: "f",
-            generic1: "NULL",
-            generic2: "NULL",
-            generic3: "NULL",
+            generic1: "0",
+            generic2: "0",
+            generic3: "0",
             procesado: "f",
-            codguiazoom: "",
+            codguiazoom: `${codguia}`,
             tipoprealert: "1",
             taxid: "NULL",
             email: `${this.casillero[0].mail}`,
             cantidaditem: `${this.dataItemSelect.length}`,
             valordeclaradoglobal: `${this.valorGlobal}`,
-            nomvendedor: "NULL",
+            nomvendedor: "0",
             repacking: "f",
-            nombrearc: "NULL",
+            nombrearc: "0",
             tipo_tarifa: "90",
-            fechasync: "",
-            codguiadhl: "NULL",
+            fechasync: `${fecha}`,
+            codguiadhl: "0",
             cuentadhl: "0",
-            detalleprealert: [
-                {
-                    codguiaprealertdetalle: `${this.prealertData ? this.prealertData.codguiaprealertdetalle : ''}`,
-                    referencia: `${this.referencia}`,
-                    codcasillero: `${this.casillero[0].codcasillero}`,
-                    descripcion: `${this.itemSelected.descripcionpais}`,
-                    valordeclarado: `${this.valorGlobal}`,
-                    cantidaditem: `${this.dataItemSelect.length}`,
-                    anulada: "f",
-                    fechacre: `${this.prealertData ? this.prealertData.fechacredetalle : ''}`,
-                    codtipoprealertmod: `${this.prealertData ? this.prealertData.fechacredetalle : ''}`,
-                    fechamod: "",
-                    codguiaprealertdetext: `${this.prealertData ? this.prealertData.codguiaprealertdetext : ''}`
-                }
-            ]
-        }
+            detalleprealert: items
 
+
+
+        }
+        console.log(params)
         this.api.post('ingresomanifiesto/create', params).subscribe(
             async (res) => {
                 console.log(res);
-              Swal.fire({
-                title: 'Se creó el manifiesto correctamente',
-                icon: 'success',
-                confirmButtonColor: '#050506',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'OK',
-              }).then(() => {
-                this.nombrecasillero = null;
-                this.codigoCliente = null;
-                this.creacionManifiesto = null;
-                this.shipperSelected = null;
-                this.proveedorSelected = null;
-                this.casilleroSelected = null;
-                this.codCasillero    = null;
-                this.nombrecasillero= null;
-                this.tipoCliente= null;
-                this.valorGlobal= null;
-                this.sumaItems= null;
-                this.otrosItem= null;
-                this.totalFactura= null;
-                this.tipoEnvio= null;
-                this.pesoitems= null;
-                this.altoitems= null;
-                this.anchoitems= null;
-                this.largoitems= null;
-                this.volumenitems= null;
-                this.dataItemSelect =[];
-                this.description = null;
-                this.statusSelected = null;
-                this.referencia= null;
-              })
+
+                if (!res.status) {
+                    this._snackBar.open(`${res.message ? res.message : res.messageval}`, '', {
+                        horizontalPosition: this.horizontalPosition,
+                        verticalPosition: this.verticalPosition,
+                        duration: 4000,
+                      })
+                      this.inputEl.nativeElement.focus()
+                }else{
+
+                    this._snackBar.open('Se creó la guía correctamente!!', '', {
+                        horizontalPosition: this.horizontalPosition,
+                        verticalPosition: this.verticalPosition,
+                        duration: 4000,
+                      });
+                      this.inputEl.nativeElement.focus()
+                        this.nombrecasillero = null;
+                        this.codigoCliente = null;
+                        this.creacionManifiesto = null;
+                        this.shipperSelected = null;
+                        this.proveedorSelected = null;
+                        this.casilleroSelected === undefined
+                        this.codCasillero    = null;
+                        this.nombrecasillero= null;
+                        this.tipoCliente= null;
+                        this.valorGlobal= null;
+                        this.sumaItems= null;
+                        this.otrosItem= null;
+                        this.totalFactura= null;
+                        this.tipoEnvio= null;
+                        this.pesoitems= null;
+                        this.altoitems= null;
+                        this.anchoitems= null;
+                        this.largoitems= null;
+                        this.volumenitems= null;
+                        this.dataItemSelect =[];
+                        this.description = null;
+                        this.statusSelected = null;
+                        this.referencia= null;
+                        this.prealertData = null
+
+                }
+
             },
             (error) => {
               console.log('error creando el manifiesto', error);
@@ -348,9 +387,10 @@ export class IngesosManifiestoComponent
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
 
+
         dialogConfig.data = {
             id: 1,
-            valorGlobal: this.valorGlobal,
+            valorGlobal: this.sumatoriaItems,
             otro: this.totalFactura
         };
 
@@ -364,12 +404,12 @@ export class IngesosManifiestoComponent
 
 
                 if(data != undefined){
-                    this.totalFactura = Number(this.totalFactura) + Number(data[0].value)
+                    this.sumatoriaItems = this.sumatoriaItems + Number(data[0].value)
                     data[0].selected = false;
                     this.dataItemSelect.push(data[0]);
-                    this.itemSelected = data[1]
+                    this.itemSelected.push(data[1])
                     this.sumaItems = this.dataItemSelect.length
-                    console.log(this.dataItemSelect);
+                    console.log(this.dataItemSelect, this.itemSelected);
                     this.dialog.closeAll();
 
                 }else{
@@ -382,7 +422,11 @@ export class IngesosManifiestoComponent
     }
 
     sumarTotal(){
-       this.totalFactura=  this.otrosItem
+        this.tipoEnvio= null
+       this.totalFactura=  this.otrosItem + this.valorGlobal;
+       this.tipoEnvio =this.totalFactura >100 ? 'MAV' : 'MBV';
+
+       console.log(this.tipoEnvio)
     }
 
     openDialog() {
@@ -474,6 +518,7 @@ export class IngesosManifiestoComponent
                 console.log(casillero); */
                 this.casilleroSelected = res.data[0].codcasillero.slice(0, 3)
                 this.codCasillero = res.data[0].codcasillero.slice(3);
+                console.log(this.codCasillero)
                 this.consultarCasillero()
                 this.tipoCliente = 'CASILLERO INTERNACIONAL ZOOM';
                 /* if(casillero.length !=0){
@@ -556,6 +601,7 @@ export class IngesosManifiestoComponent
 
               //loader.close();
               this.casillero = res.data
+              this.casilleroSelected = res.data[0].siglas
                 this.nombrecasillero = res.data[0].nombre
                 this.codigoCliente = res.data[0].codcliente
                 this.tipoCliente = 'CASILLERO INTERNACIONAL ZOOM'
@@ -701,16 +747,16 @@ export class IngesosManifiestoComponent
 
     deleteItem(){
         if(this.selectAll){
-            this.itemSelectedList.forEach(el => {
+            /* this.itemSelectedList.forEach(el => {
                 this.totalFactura = this.totalFactura - Number(el.value)
-            })
+            }) */
             this.dataItemSelect = [];
             this.itemSelectedList = []
             this.selectAll=false;
 
         }else {
             this.itemSelectedList.forEach(el => {
-                this.totalFactura = this.totalFactura - Number(el.value),
+                //this.totalFactura = this.totalFactura - Number(el.value),
                 this.dataItemSelect= this.dataItemSelect.filter(c => c !== el)
                 console.log(this.dataItemSelect)
                 this.selectAll=false;
@@ -720,8 +766,28 @@ export class IngesosManifiestoComponent
         }
     }
 
+    async getIpClient() {
+        try {
+          const response = await axios.get('https://api.ipify.org?format=json');
+
+          this.ipCliente = response.data.ip
+          console.log(this.ipCliente);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
     goBack(){
         this.router.navigate(['/home'])
+    }
+
+    calcularVolumen(){
+        this.volumenitems = null;
+        this.volumenitems = this.altoitems * this.anchoitems * this.largoitems;
+    }
+
+    cerrarSideBar(){
+        this.api.sidebar = !this.api.sidebar
     }
 
     loadingFireToast(title:any) {

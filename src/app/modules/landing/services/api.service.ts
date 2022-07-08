@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class ApiService {
+    sidebar:boolean = true;
     constructor(private http: HttpClient) { }
 
   post(path: string, data: any){
