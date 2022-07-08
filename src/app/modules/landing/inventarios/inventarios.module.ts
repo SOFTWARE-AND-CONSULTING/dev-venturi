@@ -19,6 +19,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { DialogManifiestoComponent } from './dialog-manifiesto/dialog-manifiesto.component';
 import { MatSelectModule } from '@angular/material/select';
 import { DialogAggItemsComponent } from './dialog-agg-items/dialog-agg-items.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
     declarations: [
@@ -42,7 +43,8 @@ import { DialogAggItemsComponent } from './dialog-agg-items/dialog-agg-items.com
         MatCheckboxModule,
         MatBadgeModule,
         MatDialogModule,
-        MatSelectModule
+        MatSelectModule,
+        MatSnackBarModule,
     ],
     entryComponents: [DialogManifiestoComponent, DialogAggItemsComponent],
     exports: [

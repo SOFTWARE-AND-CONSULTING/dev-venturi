@@ -2,11 +2,11 @@
     <div class="flex grid grid-cols-6 gap-6  flex-row">
         <mat-icon (click)="goBack()" class="cursor-pointer icon-size-6 text-primary col-span-1" [svgIcon]="'mat_outline:arrow_back'"></mat-icon>
         <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate col-span-4">
-            Ingresos por manifiestos
+            Inventarios
         </h2>
     </div>
-    <div class="flex flex-col gap-6 p-2 rounded-2xl shadow  bg-card w-full" >
-        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+    <div class="flex flex-col gap-6  rounded-2xl shadow  bg-card w-full" >
+        <div class="p-3 border-2 border-dashed border-gray-300 rounded-2xl">
             <div class="flex grid grid-cols-8 gap-6 items-center flex-row">
                 <button class="col-span-2" mat-flat-button color="primary">
                     Visualizar factura
@@ -52,8 +52,8 @@
                 </div>
             </div>
         </div>
-        <span>Seleccionar proceso</span>
-        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+        <span class="p-2" style="margin-top: -30px">Seleccionar proceso</span>
+        <div class="p-2 border-2 border-dashed border-gray-300 rounded-2xl" style="margin-top: -30px">
             <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
                 <mat-form-field class="w-full col-span-2">
                     <mat-label>Unidad</mat-label>
@@ -84,8 +84,8 @@
                 </mat-form-field>
             </div>
         </div>
-        <span>Ingrese los datos</span>
-        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+        <span class="p-2" style="margin-top: -30px">Ingrese los datos</span>
+        <div class="p-2 border-2 border-dashed border-gray-300 rounded-2xl" style="margin-top: -30px">
 
             <div class="flex grid grid-cols-12 gap-12 items-center flex-row">
                 <mat-form-field class="flex-auto col-span-12">
@@ -119,9 +119,9 @@
                 </mat-form-field>
             </div>
         </div>
-        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
+        <div class="p-2 border-2 border-dashed border-gray-300 rounded-2xl" style="margin-top: -20px">
             <div class="flex grid grid-cols-10 gap-6 items-center flex-row">
-                <mat-form-field class="w-full col-span-1">
+                <mat-form-field class=" col-span-1">
                     <mat-label>Valor global ($)</mat-label>
                     <input matInput type="number" max="8"  [(ngModel)]="valorGlobal" name="valorglobal" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
@@ -135,11 +135,12 @@
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Total factura ($)</mat-label>
-                    <input matInput type="number" max="10"  [(ngModel)]="totalFactura" name="totalFactura" required disabled>
+                    <input matInput type="number" max="10"  [(ngModel)]="totalFactura" name="totalFactura"  disabled>
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Tipo envio</mat-label>
-                    <input matInput type="number" max="2"  [(ngModel)]="tipoEnvio" name="tipoenvio" required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="text" max="2"   [(ngModel)]="tipoEnvio"  disabled>
+
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Peso (kg)</mat-label>
@@ -155,70 +156,47 @@
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Largo (cm)</mat-label>
-                    <input matInput type="number" max="3"  [(ngModel)]="largoitems" name="largo" required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="number" max="3"  [(ngModel)]="largoitems" (change)="calcularVolumen()" name="largo" required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Volumen (kg)</mat-label>
-                    <input matInput type="number" max="3"  [(ngModel)]="volumenitems" name="volumen" required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="number"  [(ngModel)]="volumenitems" name="volumen" disabled>
                 </mat-form-field>
             </div>
         </div>
-        <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
-            <div class="flex grid grid-cols-12 gap-12 items-center flex-row">
-                <!-- <div class="col-span-3 grid grid-cols-4 gap-6">
-                    <label class="col-span-4">Validación de factura comercial</label>
-                    <mat-form-field class="w-full col-span-2">
-                        <mat-label>¿Tiene factura?</mat-label>
-                        <select matNativeControl [placeholder]="'Seleccione'">
-                            <option value=""></option>
-                            <option value="select1-2">SI</option>
-                            <option value="select1-3">NO</option>
-                        </select>
+        <div class="p-2 border-2 border-dashed border-gray-300 rounded-2xl" style="margin-top: -20px">
+            <div class="flex grid grid-cols-12 gap-6 items-center flex-row">
+                <div class="col-span-4 border-1 border-dashed border-gray-300 rounded-2xl p-0 ">
+                    <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded fuse-mat-bold w-full col-span-2">
+                        <mat-label>Observación</mat-label>
+                        <textarea class="min-h-5 my-0 resize-none" style="margin: 11px 0 !important; padding: 0 !important;"
+                            [rows]="3"
+                            [(ngModel)]="description" name="descripcion"
+                            matInput #messageInput></textarea>
                     </mat-form-field>
-                    <mat-form-field class="w-full col-span-2">
-                        <mat-label>Validado</mat-label>
-                        <select matNativeControl [placeholder]="'Seleccione'">
+                    <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded fuse-mat-bold w-full col-span-2">
+                        <mat-label>Repacking</mat-label>
+                        <select matNativeControl disabled [placeholder]="'Seleccione'">
                             <option value=""></option>
-                            <option value="select1-2">SI</option>
-                            <option value="select1-3">NO</option>
+                            <option value="select1-2">--</option>
+                            <option value="select1-3">--</option>
                         </select>
                     </mat-form-field>
                 </div>
-                <div class="col-span-2 grid grid-cols-2 gap-6">
-                    <label>Repacking</label>
-                    <mat-form-field class="w-full col-span-2">
-                        <mat-label>¿Envio reempaquetado?</mat-label>
-                        <select matNativeControl [placeholder]="'Seleccione'">
-                            <option value=""></option>
-                            <option value="select1-2">SI</option>
-                            <option value="select1-3">NO</option>
-                        </select>
-                    </mat-form-field>
-                </div> -->
-                <div class="col-span-10 grid grid-cols-10 gap-10">
-                    <table  class="col-span-8 mat-elevation-z3">
-                        <!--
-                        <ng-container matColumnDef="no">
-                            <th mat-header-cell *matHeaderCellDef> No. piezas </th>
-                            <td mat-cell *matCellDef="let element"> {{element.no}} </td>
-                        </ng-container>
-
-
-                        <ng-container matColumnDef="description">
-                            <th mat-header-cell *matHeaderCellDef> Descripción </th>
-                            <td mat-cell *matCellDef="let element"> {{element.description}} </td>
-                        </ng-container>
-
-
-                        <ng-container matColumnDef="value">
-                            <th mat-header-cell *matHeaderCellDef> Valor </th>
-                            <td mat-cell *matCellDef="let element"> {{element.value}} </td>
-                        </ng-container>
-
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> -->
+                <div class="col-span-8 grid grid-cols-8 gap-6">
+                    <table  class="col-span-6 mat-elevation-z1">
                         <thead>
                             <tr class="text-center tr-table">
+                              <th>
+                                <div class="form-check form-switch"><input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="flexSwitchCheckDefault1"
+                                [disabled]="dataItemSelect.length ===0"
+                                name="check1"
+                                [(ngModel)]="selectAll"
+                                (change)="verifyItemSelected(1, null)"
+                              /></div></th>
                               <th scope="col">No. piezas</th>
                               <th scope="col">Descripción</th>
                               <th scope="col">Valor</th>
@@ -229,6 +207,17 @@
                               *ngFor="let item of dataItemSelect"
                               class="text-center tr-table"
                             >
+                              <td>
+                                <div class="form-check form-switch">
+                                    <input
+                                      class="form-check-input"
+                                      type="checkbox"
+                                      id="flexSwitchCheckDefault"
+                                      [(ngModel)]="item.selected"
+                                      (change)="verifyItemSelected(2, item)"
+                                    />
+                                  </div>
+                              </td>
                               <td>{{ item.no }}</td>
                               <td>
                                 {{item.description}}
@@ -238,47 +227,32 @@
                             </tr>
                           </tbody>
                     </table>
-                    <div class="col-span-2 grid gap-2">
+                    <div class="col-span-2 grid gap-4">
                         <button mat-flat-button color="primary" (click)="openDialogagg()" [disabled]="casilleroSelected === undefined">
                             Agregar
                             <mat-icon [svgIcon]="'heroicons_outline:plus-sm'"></mat-icon>
                         </button>
-                        <button mat-flat-button color="accent" [disabled]="casilleroSelected === undefined">
+                        <button mat-flat-button color="accent" (click)="modifyItem()" [disabled]="itemSelectedList?.length !== 1">
                             Modificar
                             <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
                         </button>
-                        <button mat-flat-button color="warn" [disabled]="casilleroSelected === undefined">
+                        <button mat-flat-button color="warn" [disabled]="itemSelectedList?.length === 0" (click)="deleteItem()">
                             Eliminar
                             <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
                         </button>
                     </div>
                 </div>
-
+                <div class="col-span-5 grid grid-cols-6 gap-6">
+                    <div class="col-span-6 grid grid-cols-2">
+                       <!--  <span class="col-span-2">Total items: 0</span>
+                        <span class="col-span-2">Items permitidos: 0</span> -->
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="flex grid grid-cols-12 gap-12 items-center flex-row">
-            <div class="col-span-12 border-2 border-dashed border-gray-300 rounded-2xl p-5">
 
-                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded fuse-mat-bold w-full col-span-2">
-                    <mat-label>Observación</mat-label>
-                    <textarea class="min-h-5 my-0 resize-none" style="margin: 11px 0 !important; padding: 0 !important;"
-                        [rows]="3"
-                        [(ngModel)]="description" name="descripcion"
-                        matInput #messageInput></textarea>
-                </mat-form-field>
-                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded fuse-mat-bold w-full col-span-2">
-                    <mat-label>Repacking</mat-label>
-                    <select matNativeControl disabled [placeholder]="'Seleccione'">
-                        <option value=""></option>
-                        <option value="select1-2">--</option>
-                        <option value="select1-3">--</option>
-                    </select>
-                </mat-form-field>
-            </div>
 
-        </div>
-
-        <div class="flex flex-row justify-center gap-6">
+        <div class="flex flex-row justify-center gap-6" style="margin-top: -20px">
             <button class="col-span-2" (click)="crearManifiestoForm()" mat-flat-button color="primary">
                 Aceptar
                 <mat-icon [svgIcon]="'heroicons_outline:check-circle'"></mat-icon>
