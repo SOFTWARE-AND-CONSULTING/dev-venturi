@@ -1,0 +1,39 @@
+<h2 mat-dialog-title class="title">Entrando de seguridad</h2>
+
+<mat-dialog-content>
+    <form>
+        <table class="full-width" cellspacing="0">
+            <tr>
+                <td>
+                    <mat-form-field class="full-width" appearance="fill">
+                        <mat-label>Referencia: </mat-label>
+                        <input matInput
+                                readonly
+                                [value]="referencia">
+                    </mat-form-field><br>
+                </td>
+            </tr>
+        </table>
+        <table class="full-width" cellspacing="0">
+            <tr>
+                <td>
+                    <mat-form-field class="full-width" appearance="fill">
+                        <mat-label>Shipper: </mat-label>
+                        <mat-select  [(ngModel)]="selectedShipper" name="shipper">
+                            <mat-option *ngFor="let shipper of shipperSelect" [value]="shipper.codshipper">
+                              {{shipper.nombre}}
+                            </mat-option>
+                          </mat-select>
+                    </mat-form-field>
+                </td>
+            </tr>
+        </table>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button class="mat-raised-button mat-primary mr-3"(click)="save()">Aceptar <mat-icon [svgIcon]="'heroicons_outline:check-circle'"></mat-icon></button>
+    <button class="mat-raised-button mat-primary mr-3"(click)="clean()">Limpiar <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon></button>
+    <button class="mat-raised-button"(click)="close()">Close <mat-icon [svgIcon]="'mat_outline:close'"></mat-icon></button>
+
+</mat-dialog-actions>

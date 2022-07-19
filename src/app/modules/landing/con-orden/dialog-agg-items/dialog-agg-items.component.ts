@@ -33,24 +33,16 @@ export class DialogAggItemsComponent implements OnInit {
   ) {
     this.valorGlobal = data.valorGlobal;
     this.itemOtro = data.otro;
-    this.noPiezas = data?.no;
-    this.descripcion = data?.description;
-    this.valor = data?.value;
-    this.categoriaSelected = data?.idCategoria
    }
 
   ngOnInit(): void {
-        console.log(this.valorGlobal, this.itemOtro, this.valor, this.descripcion, this.noPiezas);
-
+        console.log(this.valorGlobal, this.itemOtro);
 
      /* Traer categorías */
      this.api.get(`producto/show_productocategorias`).subscribe(
         (res) => {
           this.categorias = res.data
           console.log(this.categorias);
-          if(this.categoriaSelected){
-            this.buscarCategoria()
-        }
 
         },
         (error) => {
@@ -80,7 +72,7 @@ export class DialogAggItemsComponent implements OnInit {
             cancelButtonColor: '#d33',
             confirmButtonText: 'OK',
           })
-      }else if(Number(this.itemOtro) < (Number(this.valor)+Number(this.valorGlobal))){
+      }else if(Number(this.valorGlobal) < (Number(this.valor)+Number(this.itemOtro))){
         Swal.fire({
             title: 'El valor digitado supera el valor global',
             icon: 'info',
@@ -93,7 +85,6 @@ export class DialogAggItemsComponent implements OnInit {
             {   no: this.noPiezas,
                 description: this.descripcion,
                 value: this.valor,
-                idCategoria: this.categoriaSelected
 
             },
             this.itemSelected
@@ -136,8 +127,7 @@ export class DialogAggItemsComponent implements OnInit {
         }else{
             this.api.get(`producto/show_productocategoriadetalles/${this.categoriaSelected}`).subscribe(
                 (res) => {
-                    this.categoriasDetalle = this.descripcion ? res.data.filter((c:any) => c.nombre.toLowerCase().includes(this.descripcion.toLowerCase())) : res.data;
-                    this.categoriasDetalle.selected = this.descripcion ? true : false
+                    this.categoriasDetalle = res.data
                     console.log(this.categoriasDetalle);
 
                 },

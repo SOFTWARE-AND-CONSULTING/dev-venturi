@@ -2,14 +2,18 @@ import { Component, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from 'app/modules/landing/services/api.service';
 import { Subject } from 'rxjs';
-
+var mediaqueryList = window.matchMedia("(max-width: 900px)");
 @Component({
     selector     : 'base-layout',
     templateUrl  : './base.component.html',
     encapsulation: ViewEncapsulation.None
 })
+
 export class BaseLayoutComponent implements OnDestroy
+
+
 {
+    mobile: boolean=false;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -17,6 +21,24 @@ export class BaseLayoutComponent implements OnDestroy
      */
     constructor(public apiService:ApiService, private _router: Router)
     {
+    }
+
+    ngOnInit(): void{
+
+        this.manejador(mediaqueryList);
+        mediaqueryList.addEventListener('change',this.manejador);
+    }
+
+    manejador(EventoMediaQueryList) {
+
+        if(EventoMediaQueryList.matches) {
+          this.mobile = true;
+          this.apiService.sidebar = !this.apiService.sidebar
+
+        } else {
+          this.mobile = false;
+        }
+
     }
 
     cerrarSideBar(){

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
@@ -6,6 +6,7 @@ import { DialogManifiestoComponent } from './dialog-manifiesto/dialog-manifiesto
 import { ApiService } from '../services/api.service'
 import Swal from 'sweetalert2';
 import * as moment from 'moment';
+import axios from "axios";
 import { DialogAggItemsComponent } from './dialog-agg-items/dialog-agg-items.component';
 import {
     MatSnackBar,
@@ -13,6 +14,8 @@ import {
     MatSnackBarVerticalPosition,
   } from '@angular/material/snack-bar';
 
+type itemList = [no?:string, description?:string, value?:string];
+var mediaqueryList = window.matchMedia("(max-width: 700px)");
 @Component({
     selector     : 'inventarios',
     templateUrl  : './inventarios.component.html',
@@ -21,7 +24,7 @@ import {
 })
 export class InventariosComponent
 {
-
+    @ViewChild("myInput") inputEl: ElementRef;
     items: any = [
         {id: 1, label: 'Taquilla', icon:'mat_outline:storefront'},
         {id: 2, label: 'Operaciones', icon:'heroicons_outline:truck'},
@@ -32,7 +35,7 @@ export class InventariosComponent
         {id: 7, label: 'Reportes', icon:'heroicons_outline:document-report'},
         {id: 8, label: 'Mantenimiento', icon:'mat_outline:settings'},
     ];
-    itemSelected: any;
+    itemSelected: Array<any> = [];
     visible: boolean = true;
     /* Defining the columns that will be displayed in the table. */
     displayedColumns: string[] = ['no', 'description', 'value'];
@@ -84,20 +87,34 @@ export class InventariosComponent
     sumatoriaItems: number = 0;
     horizontalPosition : MatSnackBarHorizontalPosition = 'start' ;
     verticalPosition: MatSnackBarVerticalPosition = 'top' ;
+    codGuia: any;
+    codGuiaPre: any;
+    internacional: string;
+    mobile: boolean=false;
+    guiaRadicado: any;
+    codguiaprealertdetalle: any;
+    prealertDataGuia: any;
     /**
      * Constructor
      */
     constructor(
         private router: Router,
         private dialog: MatDialog,
-        public api: ApiService
+        public api: ApiService,
+        private _snackBar: MatSnackBar,
         )
     {
     }
 
     ngOnInit(): void{
+        this.manejador(mediaqueryList);
+       mediaqueryList.addEventListener('change',this.manejador);
        this.codUser = localStorage.getItem('codusuario');
-
+       this.getIpClient();
+       var currentTime = new Date();
+       console.log(currentTime.toString())
+       const hora = (currentTime.getHours() < 10 ? 0 + `${currentTime.getHours()}` : currentTime.getHours()) +':'+ (currentTime.getMinutes() < 10 ? 0 + `${currentTime.getMinutes()}` : currentTime.getMinutes())+':'+ (currentTime.getSeconds() < 10 ? 0 + `${currentTime.getSeconds()}` : currentTime.getSeconds());
+       console.log(hora)
        /* Traer casilleros */
        this.api.get(`estatus/show_unidad`).subscribe(
         (res) => {
@@ -134,6 +151,17 @@ export class InventariosComponent
 
     }
 
+    manejador(EventoMediaQueryList) {
+
+        if(EventoMediaQueryList.matches) {
+          this.mobile = true;
+
+        } else {
+          this.mobile = false;
+        }
+
+        }
+
     checkaerea(aereo:any){
         this.refAerea =  aereo;
     }
@@ -168,50 +196,219 @@ export class InventariosComponent
       }
 
     crearManifiestoForm(){
+        let items:any = []
+        let descriptionItems:string='';
         const fecha = moment().format('YYYY-MM-DD')
         var currentTime = new Date();
+        console.log(this.dataItemSelect,this.itemSelected, this.prealertData)
         this.dataItemSelect.forEach((item) => {
            this.noPiezas = this.noPiezas+ Number(item.no)})
-        const hora = currentTime.getHours()+':'+currentTime.getMinutes()+':'+currentTime.getSeconds()
+        const hora = (currentTime.getHours() < 10 ? 0 + `${currentTime.getHours()}` : currentTime.getHours()) +':'+ (currentTime.getMinutes() < 10 ? 0 + `${currentTime.getMinutes()}` : currentTime.getMinutes())+':'+ (currentTime.getSeconds() < 10 ? 0 + `${currentTime.getSeconds()}` : currentTime.getSeconds());
+        console.log(hora)
         const codguia = this.randomInteger(8);
+        this.dataItemSelect.forEach((item:any, index) => {
+            items.push(
+            {
+                codguiaprealertdetalle: `${this.codguiaprealertdetalle[index].codguiaprealertdetalle}`,
+                referencia: `${this.referencia}`,
+                codcasillero: `${this.codCasillero}`,
+                descripcion: `${this.itemSelected[index]?.descripcionpais}`,
+                valordeclarado: `${this.valorGlobal}`,
+                cantidaditem: `${this.dataItemSelect.length}`,
+                anulada: "f",
+                fechacre: `${this.codguiaprealertdetalle[index].fechacredetalle}`,
+                codtipoprealertmod: `${this.codguiaprealertdetalle[index].codtipoprealertmoddetalle}`,
+                fechamod:  `${fecha}`,
+                codguiaprealertdetext: `${this.codguiaprealertdetalle[index].codguiaprealertdetext}`
+            })
+            descriptionItems = descriptionItems+`${this.itemSelected[index]?.descripcionpais}, `
+
+        })
+
         const params = {
+            codguia:`${this.codGuiaPre}`,
+            codciudadoriope: `${this.prealertDataGuia.Guia.codciudadoriope}`,
+            fecha: `${fecha}`,
+            fechapro: `${fecha}`,
+            codoficinaori: `${this.prealertDataGuia.Guia.codoficinaori}`,
+            codoficinades: `${this.prealertDataGuia.Guia.codoficinades}`,
+            contactorem: `${this.prealertDataGuia.Guia.contactorem}`,
+            direccionrem: `${this.prealertDataGuia.Guia.direccionrem}`,
+            telefonorem: "1",
+            codcliente: `${this.prealertDataGuia.Guia.codcliente}`,
+            coddestinatario: `${this.prealertDataGuia.Guia.coddestinatario}`,
+            destinatario: `${this.prealertDataGuia.Guia.destinatario}`,
+            direcciondes: `${this.prealertDataGuia.Guia.direcciondes}`,
+            contactodes: `${this.prealertDataGuia.Guia.contactodes}`,
+            codciudaddes: `${this.prealertDataGuia.Guia.codciudaddes}`,
+            telefonodes: "1",
+            codtipoenv: "2",//
+            numeropie: "1",
+            pesovol: `${this.volumenitems}`,
+            pesobru: `${this.pesoitems}`,
+            basicoori: "0",
+            sobrepesoori: "0",
+            subtotori: "0",
+            otrosori: `${this.otrosItem}`,
+            totalpag: `${this.totalFactura}`,
+            mercancia:  `${this.totalFactura}`, // es el valor de total factura
+            codservicio: `${this.prealertDataGuia.Guia.codservicio}`,
+            codpaisdes: `${this.prealertDataGuia.Guia.codpaisdes}`,
+            codtipopag: "1",
+            referencia: `${this.referencia}`,
+            codoficinaope: `${this.prealertDataGuia.Guia.codoficinaope}`,
+            descuentoemp: "f",
+            codestatus: `${this.estatusSelected}`,
+            descripcioncon: descriptionItems, //concatenación de los item  descripcion país
+            anulada: "f",
+            cortesia: "f",
+            codusuario: `${this.codUser}`,//
+            codestaciondes: `${this.prealertDataGuia.Guia.codestaciondes}`,
+            descuento: "0",
+            fechaing: `${fecha}`,
+            costobas: "0",
+            costoadi: "0",
+            ciudaddesint: "0",
+            codmanifiesto: "0",
+            largo: `${this.altoitems}`,
+            ancho: `${this.anchoitems}`,
+            alto: `${this.largoitems}`,
+            dimensiones: `${this.anchoitems}x${this.largoitems}x${this.altoitems}`,
+            codshipper: `${this.prealertDataGuia.Guia.codshipper}`,
+            direccionip: this.ipCliente,
+            codagente: "0",
+            cantidad25: "0",
+            otrosdes: "0",
+            totalestatuspro: "0",
+            codruta: "0",
+            observacion: `${this.description}`,
+            codtipopes: "2",
+            hora: "0",
+            horareal: `${hora}`,
+            fechahorareal: "0",
+            casilleroexcento: "f",
+            guiaelectronica: "f",
+            nummedioskilos: "6",
+            subtotal: "8",
+            seguro: "5",
+            otros: `${this.otrosItem}`,
+            total: `${this.totalFactura}`,
+            fechamod: `${fecha}`,
+            codguiadet: "0",
+            basico: "12",
+            adicional: "2",
+            codproducto: `${this.prealertDataGuia.Guia.guiaguidet[0].codproducto}`,
+            descuentobas: "0",
+            descuentosob: "0",
+            tipocarga: `${this.tipoEnvio}`,
+            gastosaduanal: "0",
+            tiporef: "0",
+            nomcliente: "0",
+            tlfemisor: "NULL",
+            direccionemisor: "0",
+            ciudademisor: "0",
+            paisorigen: "VENEZUELA",
+            siglaspaisori: "VE",
+            direcciondestino: "0",
+            companiadestino: "0",
+            nombredestino: `${this.prealertDataGuia.guiaprealert.nombredestino}`,
+            telefonodestino: "0",
+            ciudaddestino: "0",
+            paisdestino: "VENEZUELA",
+            codpaisori:"1",
+            siglaspaisdes: "VE",
+            zipcode: "0",
+            suburbs: "0",
+            codcasillero: `${this.prealertDataGuia.guiaprealert.codcasillero}`,
+            npiezas: `${this.noPiezas}`,
+            pesob: "0.75",
+            depth: "0",
+            descripcion: descriptionItems, // concatenacion de todos los items
+            valordeclarado: `${this.valorGlobal}`,
+            cantidadasegurada: `${this.noPiezas}`,
+            tiposeguro: "Y",
+            tipoenv: "P",
+            retenido: "f",
+            generic1: "0",
+            generic2: "0",
+            generic3: "0",
+            procesado: "f",
+            codguiazoom: `${codguia}`,
+            tipoprealert: "1",
+            taxid: "NULL",
+            email: `${this.prealertDataGuia.guiaprealert.email}`,
+            cantidaditem: `${this.dataItemSelect.length}`,
+            valordeclaradoglobal: `${this.valorGlobal}`,
+            nomvendedor: "0",
+            repacking: "f",
+            nombrearc: "0",
+            tipo_tarifa: "90",
+            fechasync: `${fecha}`,
+            codguiadhl: "0",
+            cuentadhl: "0",
+            detalleprealert: items
+
+
 
         }
-
-        this.api.post('ingresomanifiesto/create', params).subscribe(
+        console.log(params)
+        this.api.post('inventario/create/', params).subscribe(
             async (res) => {
                 console.log(res);
-              Swal.fire({
-                title: 'Se creó el manifiesto correctamente',
-                icon: 'success',
-                confirmButtonColor: '#050506',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'OK',
-              }).then(() => {
-                this.nombrecasillero = null;
-                this.codigoCliente = null;
-                this.creacionManifiesto = null;
-                this.shipperSelected = null;
-                this.proveedorSelected = null;
-                this.casilleroSelected = null;
-                this.codCasillero    = null;
-                this.nombrecasillero= null;
-                this.tipoCliente= null;
-                this.valorGlobal= null;
-                this.sumaItems= null;
-                this.otrosItem= null;
-                this.totalFactura= null;
-                this.tipoEnvio= null;
-                this.pesoitems= null;
-                this.altoitems= null;
-                this.anchoitems= null;
-                this.largoitems= null;
-                this.volumenitems= null;
-                this.dataItemSelect =[];
-                this.description = null;
-                this.statusSelected = null;
-                this.referencia= null;
-              })
+
+                if (!res.status) {
+                    this._snackBar.open(`${res.message ? res.message : res.messageval}`, '', {
+                        horizontalPosition: this.horizontalPosition,
+                        verticalPosition: this.verticalPosition,
+                        duration: 4000,
+                      })
+                      this.inputEl.nativeElement.focus()
+                }else{
+
+                    this.guiaRadicado = res.data;
+                    this._snackBar.open(`Se creó el invetario de la guia ${this.guiaRadicado} correctamente!!`, '', {
+                        horizontalPosition: this.horizontalPosition,
+                        verticalPosition: this.verticalPosition,
+                        duration: 4000,
+                      });
+                      this.inputEl.nativeElement.focus()
+                        this.nombrecasillero = null;
+                        this.codigoCliente = null;
+                        this.creacionManifiesto = null;
+                        this.shipperSelected = null;
+                        this.proveedorSelected = null;
+                        this.casilleroSelected === undefined
+                        this.codCasillero    = null;
+                        this.nombrecasillero= null;
+                        this.tipoCliente= null;
+                        this.valorGlobal= null;
+                        this.sumaItems= null;
+                        this.otrosItem= null;
+                        this.totalFactura= null;
+                        this.tipoEnvio= null;
+                        this.pesoitems= null;
+                        this.altoitems= null;
+                        this.anchoitems= null;
+                        this.largoitems= null;
+                        this.volumenitems= null;
+                        this.dataItemSelect =[];
+                        this.description = null;
+                        this.statusSelected = null;
+                        this.referencia= null;
+                        this.prealertData = null;
+                        this.codGuiaPre = null;
+                        this.proecesoSelected = null;
+                        this.subProcesoSelected = null;
+                        this.estatusSelected = null;
+                        this.codGuia = null;
+                        this.codCasillero =  null;
+                        this.nombrecasillero = null;
+                        this.internacional = null;
+                        this.unidad = null;
+
+
+                }
+
             },
             (error) => {
               console.log('error creando el manifiesto', error);
@@ -220,47 +417,8 @@ export class InventariosComponent
 
     }
 
-    traerProcesos(){
-        console.log(this.unidad)
-        this.api.get(`estatus/show_proceso/${this.unidad}`).subscribe(
-            (res) => {
-              this.procesos = res.data
-              console.log(this.procesos);
 
-            },
-            (error) => {
-              console.log('error buscando el proceso', error)
-            }
-          );
-    }
 
-    traerSubProcesos(){
-        console.log(this.proecesoSelected)
-        this.api.get(`estatus/show_subproceso/${this.unidad}/${this.proecesoSelected}`).subscribe(
-            (res) => {
-              this.subProcesos = res.data
-              console.log(this.subProcesos);
-
-            },
-            (error) => {
-              console.log('error buscando el sub-proceso', error)
-            }
-          );
-    }
-
-    traerStatus(){
-        console.log(this.subProcesoSelected)
-        this.api.get(`estatus/show_arbolestatus/${this.unidad}/${this.proecesoSelected}/${this.subProcesoSelected}`).subscribe(
-            (res) => {
-              this.estatus = res.data
-              console.log(this.estatus);
-
-            },
-            (error) => {
-              console.log('error buscando el sub-proceso', error)
-            }
-          );
-    }
 
     openDialogagg() {
 
@@ -268,6 +426,7 @@ export class InventariosComponent
 
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
+
 
         dialogConfig.data = {
             id: 1,
@@ -367,7 +526,6 @@ export class InventariosComponent
             (res) => {
               console.log(res);
               if(res?.data?.length > 0){
-                  this.preAlert();
                   loader.close();
               }else{
                 this.openDialog();
@@ -382,60 +540,38 @@ export class InventariosComponent
           );
     }
 
-    preAlert(){
-        //${this.referencia}
-        this.api.get(`prealertreferencia/show/${this.referencia}`).subscribe(
+    traerProcesos(){
+        this.api.get(`estatus/show_proceso/${this.unidad}`).subscribe(
             (res) => {
-              console.log(res);
-                this.prealertData = res.data
-                this.shipperSelected = res.data[0].nomcliente
-                const proveedor = this.proveedores.filter(p => p.nombre==res.data[0].companiadestino)
-                console.log(proveedor);
-
-                this.proveedorSelected = proveedor.codproveedor
-
-
-                /* const casillero = this.casilleros.filter(c => c.nombre==res.data[0].codcasillero.slice(0, 3))
-                console.log(casillero); */
-                this.casilleroSelected = res.data[0].codcasillero.slice(0, 3)
-                this.codCasillero = res.data[0].codcasillero.slice(3);
-                this.consultarCasillero()
-                this.tipoCliente = 'CASILLERO INTERNACIONAL ZOOM';
-                /* if(casillero.length !=0){
-                    this.casilleroSelected = res.data[0].codcasillero.slice(0, 3)
-                    this.codCasillero = res.data[0].codcasillero.slice(3);
-                    this.consultarCasillero()
-                    this.tipoCliente = 'CASILLERO INTERNACIONAL ZOOM';
-                }else{
-                    this.casilleroSelected = 'SCL';
-                    this.codCasillero = res.data[0].codcasillero.slice(3);
-                    this.api.get(`casillero/show/${this.codCasillero}`).subscribe(
-                        (res) => {
-                          console.log(res);
-                          console.log(this.casilleroSelected);
-
-                          //loader.close();
-                            this.nombrecasillero = res.data[0].nombre
-                            this.codigoCliente = res.data[0].codcliente
-                            this.consultarCliente()
-
-                        },
-                        (error) => {
-                          //loader.close();
-                          console.log('error buscando la referencia', error)
-                        }
-                      );
-                    this.tipoCliente = 'CASILLERO INTERNACIONAL ZOOM';
-                } */
-
-
-
-
+              this.procesos = res.data
 
             },
             (error) => {
+              console.log('error buscando los procesos', error)
+            }
+          );
+    }
 
-              console.log('error buscando la referencia', error)
+    traerSubProcesos(){
+        this.api.get(`estatus/show_subproceso/${this.unidad}/${this.proecesoSelected}`).subscribe(
+            (res) => {
+              this.subProcesos = res.data
+
+            },
+            (error) => {
+              console.log('error buscando los procesos', error)
+            }
+          );
+    }
+
+    traerStatus(){
+        this.api.get(`estatus/show_arbolestatus/${this.unidad}/${this.proecesoSelected}/${this.subProcesoSelected}`).subscribe(
+            (res) => {
+              this.estatus = res.data
+
+            },
+            (error) => {
+              console.log('error buscando los procesos', error)
             }
           );
     }
@@ -470,28 +606,48 @@ export class InventariosComponent
           );
     }
 
-    consultarCasillero(){
-        console.log(this.codCasillero);
+    consultarGuia(){
+
 
         //const loader:any = this.loadingFireToast('Consultando casillero, por favor espere...');
-        this.api.get(`casillero/show/${this.codCasillero}`).subscribe(
+        this.api.get(`inventario/show/${this.codGuia}`).subscribe(
             (res) => {
-              console.log(res);
-              console.log(this.casilleroSelected);
+            console.log(res);
+            this.prealertDataGuia = res.dataprealert
+            this.codGuiaPre = res.dataprealert?.Guia.codguia;
+            this.codCasillero = res.dataprealert?.guiaprealert.codcasillero;
+            this.internacional = "CASILLERO INTERNACIONAL ZOOM";
+            this.nombrecasillero = res.dataprealert?.guiaprealert.nombredestino;
+            this.valorGlobal = res.dataprealert?.guiaprealert.valordeclaradoglobal;
+            this.sumaItems = res.dataprealert?.guiaprealert.cantidaditem;
+            this.otrosItem = res.dataprealert?.Guia.otrosori;
+            this.totalFactura = res.dataprealert?.Guia.totalpag;
+            this.tipoEnvio = res.dataprealert.guiaprealert.tipoenv;
+            this.pesoitems = res.dataprealert.Guia.pesobru;
+            this.altoitems = res.dataprealert.Guia.alto;
+            this.anchoitems = res.dataprealert.Guia.ancho;
+            this.largoitems = res.dataprealert.Guia.largo;
+            this.volumenitems = res.dataprealert.Guia.pesovol;
+            this.description = res.dataprealert.Guia.observacion;
+            res.dataprealert.guiaprealert.guiaprealertdet.forEach((item:any, index:any) => {
+                if(index<=1){
+                    this.dataItemSelect.push({
+                        no:item.cantidaditem,
+                        description: item.descripcion,
+                        value: item.valordeclarado
+                    });
+                    this.itemSelected.push({
+                        descripcionpais: item.descripcion
+                    })
+                }else{
+                    return
+                }
 
-              //loader.close();
-              this.casillero = res.data
-              this.casilleroSelected = res.data[0].siglas
-                this.nombrecasillero = res.data[0].nombre
-                this.codigoCliente = res.data[0].codcliente
-                this.tipoCliente = 'CASILLERO INTERNACIONAL ZOOM'
-                this.consultarCliente()
-              /* if(this.casilleroSelected == res?.data[0].siglas){
-                this.nombrecasillero = res.data[0].nombre
-                this.codigoCliente = res.data[0].codcliente
-                this.tipoCliente = 'CASILLERO INTERNACIONAL ZOOM'
-                this.consultarCliente()
-              } */
+
+            })
+            this.referencia = res.dataprealert.Guia.referencia
+            this.codguiaprealertdetalle =  res.dataprealert.guiaprealert.guiaprealertdet
+
 
             },
             (error) => {
@@ -574,7 +730,6 @@ export class InventariosComponent
                         }
 
                     }else{
-                        console.log(this.itemSelectedList, 'false')
                         this.itemSelectedList = this.itemSelectedList.filter((con:any) => con.description!==c.description)
                         console.log(this.itemSelectedList, 'false')
                     }
@@ -595,7 +750,7 @@ export class InventariosComponent
     }
 
     modifyItem(){
-        console.log(this.itemSelectedList)
+
         const dialogConfig = new MatDialogConfig();
 
         dialogConfig.disableClose = true;
@@ -610,7 +765,8 @@ export class InventariosComponent
             value: this.itemSelectedList[0].value,
             idCategoria: this.itemSelectedList[0].idCategoria,
         };
-        this.dataItemSelect = this.dataItemSelect.filter(el => el.description !==this.itemSelectedList.description)
+        this.dataItemSelect = this.dataItemSelect.filter(el => el.description !==this.itemSelectedList[0].description)
+        console.log(this.dataItemSelect)
         this.dialog.open(DialogAggItemsComponent, dialogConfig);
 
         const dialogRef = this.dialog.open(DialogAggItemsComponent, dialogConfig);
@@ -623,7 +779,7 @@ export class InventariosComponent
                 if(data != undefined){
                     this.totalFactura = Number(this.totalFactura) + Number(data[0].value)
                     this.dataItemSelect.push(data[0]);
-                    this.itemSelected = data[1]
+                    this.itemSelected.push(data[1])
                     this.sumaItems = this.dataItemSelect.length
                     console.log(this.dataItemSelect);
                     this.dialog.closeAll();
@@ -657,6 +813,17 @@ export class InventariosComponent
 
         }
     }
+
+    async getIpClient() {
+        try {
+          const response = await axios.get('https://api.ipify.org?format=json');
+
+          this.ipCliente = response.data.ip
+          console.log(this.ipCliente);
+        } catch (error) {
+          console.error(error);
+        }
+      }
 
     loadingFireToast(title:any) {
         return Swal.fire({

@@ -1,0 +1,158 @@
+<div class="w-full p-5 shadow  bg-card border-gray-300 rounded-2xl">
+    <div class="flex grid grid-cols-6 gap-6  flex-row mb-3">
+        <mat-icon (click)="goBack()" class="cursor-pointer icon-size-6 text-primary col-span-1" [svgIcon]="'mat_outline:arrow_back'"></mat-icon>
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate col-span-4">
+           Consolidar envíos
+        </h2>
+    </div>
+        <div class="p-2 border-2 border-dashed border-gray-300 rounded-2xl mb-3">
+            <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
+                <mat-form-field class="w-full col-span-6">
+                    <mat-label>Orden de consolidación</mat-label>
+                    <input matInput type="number" max="10" (change)="consultarCasillero()" [(ngModel)]="codCasillero" name="shipper" required>
+                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:user'"></mat-icon>
+                </mat-form-field>
+                <mat-form-field class="flex-auto col-span-2">
+                    <mat-label>Casillero</mat-label>
+                    <input matInput type="number" max="10" (change)="consultarCasillero()" [(ngModel)]="codCasillero" name="shipper" required>
+                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:user'"></mat-icon>
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-2">
+                    <mat-label></mat-label>
+                    <input matInput [(ngModel)]="nombrecasillero" readonly >
+                </mat-form-field>
+                <mat-form-field class="w-full col-span-2">
+                    <mat-label></mat-label>
+                    <input matInput [(ngModel)]="nombrecasillero" readonly >
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="p-5 mb-2 border-2 border-dashed border-gray-300 items-center rounded-2xl flex-row">
+            <div class="flex grid grid-cols-8 gap-6 items-center flex-row justify-items-center text-center">
+
+                <div class="col-span-12 justify-items-center items-center text-center">
+                    <label>Servicio:</label>
+                    <mat-radio-group class="flex flex-col mt-1" [color]="'primary'" [value]="'just-good'">
+                        <mat-radio-button class="mb-1" [value]="'aereo'" checked="true" (change)="checkaerea($event)">
+                            Aéreo
+                        </mat-radio-button>
+                        <mat-radio-button class="mb-1" [value]="'maritimo'">
+                            Marítimo
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="p-2 border-2 border-dashed border-gray-300 rounded-2xl mb-3" >
+            <div class="flex grid grid-cols-12 gap-6 items-center flex-row">
+
+                <div class="col-span-12 grid grid-cols-12 gap-6 ">
+                    <table  class="col-span-10 mat-elevation-z1 h-24">
+                        <thead>
+                            <tr class="text-center tr-table">
+                              <th>
+                                <div class="form-check form-switch"><input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="flexSwitchCheckDefault1"
+                                [disabled]="dataItemSelect.length ===0"
+                                name="check1"
+                                [(ngModel)]="selectAll"
+                                (change)="verifyItemSelected(1, null)"
+                              /></div></th>
+                              <th scope="col">Referencia</th>
+                              <th scope="col">Guía zoom</th>
+                              <th scope="col">Peso (Kg)</th>
+                              <th scope="col">Valor ($)</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              *ngFor="let item of dataItemSelect"
+                              class="text-center tr-table"
+                            >
+                              <td>
+                                <div class="form-check form-switch">
+                                    <input
+                                      class="form-check-input"
+                                      type="checkbox"
+                                      id="flexSwitchCheckDefault"
+                                      [(ngModel)]="item.selected"
+                                      (change)="verifyItemSelected(2, item)"
+                                    />
+                                  </div>
+                              </td>
+                              <td>{{ item.no }}</td>
+                              <td>
+                                {{item.description}}
+                              </td>
+                              <td>{{ item.value }}</td>
+
+                            </tr>
+                          </tbody>
+                    </table>
+                    <div class="col-span-2 grid gap-4">
+
+                        <button mat-flat-button color="warn" [disabled]="itemSelectedList?.length === 0" (click)="deleteItem()">
+                            Eliminar
+                            <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-span-11 grid grid-cols-12 gap-6">
+                    <div class="col-span-3 grid grid-cols-3">
+                        <span class="col-span-2">Total envío: 0</span>
+                    </div>
+                    <div class="col-span-3 grid grid-cols-3">
+                        <span class="col-span-2">Total envío a consolidar: 0</span>
+                    </div>
+                    <div class="col-span-3 grid grid-cols-3">
+                        <span class="col-span-2">Total peso: 0</span>
+                    </div>
+                    <div class="col-span-3 grid grid-cols-3">
+                        <span class="col-span-2">Total valor: 0</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="p-2 border-2 border-dashed border-gray-300 rounded-2xl mb-3" >
+            <div class="flex grid grid-cols-12 gap-6 items-center flex-row">
+
+                <div class="col-span-12 border-1 border-dashed border-gray-300 rounded-2xl p- ">
+                    <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded fuse-mat-bold w-full col-span-2">
+                        <mat-label>Observación</mat-label>
+                        <textarea class="min-h-5 my-0 resize-none" style="margin: 11px 0 !important; padding: 0 !important;"
+                            [rows]="3"
+                            [(ngModel)]="description" name="descripcion"
+                            matInput #messageInput></textarea>
+                    </mat-form-field>
+                </div>
+
+
+            </div>
+        </div>
+
+
+        <div class="flex flex-row justify-center gap-6 mb-5">
+            <button class="col-span-2" (click)="crearManifiestoForm()" mat-flat-button color="primary">
+                Aceptar
+                <mat-icon [svgIcon]="'heroicons_outline:check-circle'"></mat-icon>
+            </button>
+            <button class="col-span-2" (click)="limpiarForm()" mat-flat-button color="accent">
+                Limpiar
+                <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+            </button>
+            <button class="col-span-2" (click)="goTo('/home')" mat-flat-button color="warn">
+                Cancelar
+                <mat-icon [svgIcon]="'mat_outline:close'"></mat-icon>
+            </button>
+        </div>
+        <div class="flex flex-row justify-center gap-6">
+            <span class="col-span-12">NOTA: En esta ventana puede eliminar o agregar envios a la nota de
+                consolidación con máximo de 4 envios y un mínimo de 2 envios
+            </span>
+        </div>
+    </div>

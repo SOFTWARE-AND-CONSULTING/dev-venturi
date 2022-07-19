@@ -1,11 +1,11 @@
-<div class="w-screen">
-    <div class="flex grid grid-cols-6 gap-6  flex-row">
+<div class="min-h-screen sm md lg p-5  flex-col">
+    <div class="flex grid grid-cols-6 gap-6  flex-row h-10">
         <mat-icon (click)="goBack()" class="cursor-pointer icon-size-6 text-primary col-span-1" [svgIcon]="'mat_outline:arrow_back'"></mat-icon>
         <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate col-span-4">
             Ingresos por manifiestos
         </h2>
     </div>
-    <div class="flex flex-col gap-6 p-2 rounded-2xl shadow  bg-card w-full" >
+    <div class="flex flex-col gap-6 p-2 rounded-2xl shadow  bg-card min-h-screen" >
         <div class="p-5 border-2 border-dashed border-gray-300 rounded-2xl">
             <div class="flex grid grid-cols-8 gap-6 items-center flex-row">
                 <button class="col-span-2" mat-flat-button color="primary">
@@ -25,7 +25,7 @@
                 </div>
                 <div class="col-span-3 text-center">
                     <h3 class="text-base font-bold">Último nro. procesado:</h3>
-                    <h3 class="text-primary text-base font-bold">0</h3>
+                    <h3 class="text-primary text-base font-bold">{{guiaRadicado}}</h3>
                 </div>
                 <div class="col-span-2 flex flex-col">
                     <div>

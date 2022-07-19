@@ -1,4 +1,4 @@
-<div class="grid gap-8 grid-cols-5">
+<div class="grid gap-8 grid-cols-5 items-center justify-around">
   <div [matMenuTriggerFor]="menu" *ngFor="let item of items" [@shake]="itemSelected === item.id"
     (click)="itemSelected = item.id;" class="box-neu col-span-1 p-4">
     <div class="{{item?.id === itemSelected ? 'bg-primary' : ''}} br-50 justify-center items-center p-3 flex flex-col">
@@ -25,10 +25,14 @@
     <button mat-menu-item>Documento</button>
     <button mat-menu-item>Ingreso por vía electrónica</button>
     <button mat-menu-item [matMenuTriggerFor]="submenu2">Consolidar envíos</button>
-    <button mat-menu-item [matMenuTriggerFor]="submenu2">Generar valijas/manifiestos</button>
+    <button mat-menu-item [matMenuTriggerFor]="submenu3">Generar valijas/manifiestos</button>
   </mat-menu>
 
   <mat-menu #submenu2="matMenu">
+    <button mat-menu-item (click)="goTo('/con-orden')">Con orden</button>
+    <button mat-menu-item (click)="goTo('/sin-orden')">Sin orden</button>
+  </mat-menu>
+  <mat-menu #submenu3="matMenu">
     <button mat-menu-item>--</button>
     <button mat-menu-item>--</button>
   </mat-menu>

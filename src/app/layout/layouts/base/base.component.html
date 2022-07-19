@@ -1,25 +1,25 @@
 <!-- Loading bar -->
 <fuse-loading-bar></fuse-loading-bar>
 
-<div class="flex grid grid-cols-6 flex-row items-center justify-center w-full h-full" >
+<div class="flex grid grid-cols-6 flex-row items-start justify-start w-full " >
 
     <p class="col-span-6 " *ngIf="!apiService.sidebar">
         <mat-toolbar color="primary">
-            <button mat-icon-button color="primary" class="example-icon" (click)="cerrarSideBar()" aria-label="Example icon-button with menu icon">
+            <button mat-icon-button color="primary" [style]="!mobile ? 'margin-top: 3px' : ''" class="example-icon" (click)="cerrarSideBar()" aria-label="Example icon-button with menu icon">
              <mat-icon>menu</mat-icon>
            </button>
          </mat-toolbar>
     </p>
-    <div class="col-span-1 box-left h-full p-5 flex flex-col items-center justify-around" *ngIf="apiService.sidebar">
-        <mat-icon class="ml-2 icon-size-10 cursor-pointer" [svgIcon]="'heroicons_solid:menu'" (click)="cerrarSideBar()" style="margin-top: -70px"></mat-icon>
-        <img class="w-30" src="../../../../assets/images/logo/logo-zoom.png" style="margin-top: -100px">
-        <div class="mt-5">
-            <h3><strong>Usuario:</strong> Mary Guevara</h3>
-            <h3><strong>Oficina:</strong> TAQUILLA</h3>
+    <div [class]="!mobile ?'col-span-1 box-left min-h-screen w-8 sm md lg p-5 flex flex-col items-center  justify-around' : 'col-span-1 box-left min-h-screen sm  p-5 flex flex-col items-start justify-around'" *ngIf="apiService.sidebar || (mobile ? false : '')">
+        <mat-icon class="ml-2 icon-size-10 cursor-pointer" [svgIcon]="'heroicons_solid:menu'" (click)="cerrarSideBar()" [style]="mobile ? 'margin-top: -70px' : 'margin-top: -70px'"></mat-icon>
+        <img class="w-30" src="../../../../assets/images/logo/logo-zoom.png" *ngIf="!mobile" style="margin-top: -90px">
+        <div class="mt-5" *ngIf="mobile===true ? false : true">
+            <h3><strong>Usuario:</strong> Mary Guevara </h3>
+            <h3><strong>Oficina:</strong> TAQUILLA </h3>
         </div>
-        <img class="w-50" src="../../../../assets/images/ui/scene-1.svg">
-        <div>
-          <a mat-flat-button class="flex flex-row items-center mt-5" [routerLink]="''" >
+        <img *ngIf="mobile===true ? false : true" class="w-50" src="../../../../assets/images/ui/scene-1.svg">
+        <div [class]=" (mobile===true ? false : true) ? '' : 'justify-start'">
+          <a mat-flat-button class="flex flex-row items-center   mt-5" [routerLink]="''" >
               <span>Ayuda</span>
               <mat-icon class="ml-2 icon-size-5" [svgIcon]="'heroicons_outline:hand'"></mat-icon>
           </a>
@@ -29,7 +29,7 @@
             </a>
         </div>
     </div>
-    <div [class]="apiService.sidebar? 'col-span-5 p-5 w-full' : 'col-span-6 p-5 w-full'  ">
+    <div [class]="apiService.sidebar? 'col-span-5 p-2 max-h-screen sm md lg p-2 items-center justify-around' : !mobile ? 'col-span-6 min-h-screen sm md lg p-2 ': 'col-span-6  min-h-screen sm md lg p-2 ' ">
         <router-outlet *ngIf="true"></router-outlet>
     </div>
 </div>

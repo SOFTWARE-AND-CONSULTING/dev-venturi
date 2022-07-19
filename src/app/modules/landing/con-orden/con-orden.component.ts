@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
@@ -6,7 +6,6 @@ import { DialogManifiestoComponent } from './dialog-manifiesto/dialog-manifiesto
 import { ApiService } from '../services/api.service'
 import Swal from 'sweetalert2';
 import * as moment from 'moment';
-import axios from "axios";
 import { DialogAggItemsComponent } from './dialog-agg-items/dialog-agg-items.component';
 import {
     MatSnackBar,
@@ -14,19 +13,14 @@ import {
     MatSnackBarVerticalPosition,
   } from '@angular/material/snack-bar';
 
-var mediaqueryList = window.matchMedia("(max-width: 700px)");
-
-type itemList = [no?:string, description?:string, value?:string];
 @Component({
-    selector     : 'ingresos-manifiesto',
-    templateUrl  : './ingresos-manifiesto.component.html',
+    selector     : 'con-orden',
+    templateUrl  : './con-orden.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-
-export class IngesosManifiestoComponent
+export class ConOrdenComponent
 {
-    @ViewChild("myInput") inputEl: ElementRef;
 
     items: any = [
         {id: 1, label: 'Taquilla', icon:'mat_outline:storefront'},
@@ -38,7 +32,7 @@ export class IngesosManifiestoComponent
         {id: 7, label: 'Reportes', icon:'heroicons_outline:document-report'},
         {id: 8, label: 'Mantenimiento', icon:'mat_outline:settings'},
     ];
-    itemSelected:any = [];
+    itemSelected: any;
     visible: boolean = true;
     /* Defining the columns that will be displayed in the table. */
     displayedColumns: string[] = ['no', 'description', 'value'];
@@ -75,43 +69,40 @@ export class IngesosManifiestoComponent
     description: any;
     noPiezas: number=0;
     prealertData: any;
-    allowClosed: boolean = false;
-
+    //--------
+    unidades: any;
+    unidad:any;
+    proecesoSelected:any;
+    procesos: any;
+    subProcesoSelected:any;
+    subProcesos: any;
+    estatusSelected
+    estatus: any;
     itemSelectedList:any = [];
     selectAll:boolean=false;
     ipCliente: any;
     sumatoriaItems: number = 0;
     horizontalPosition : MatSnackBarHorizontalPosition = 'start' ;
     verticalPosition: MatSnackBarVerticalPosition = 'top' ;
-    mobile: boolean=false;
-    guiaRadicado: any;
     /**
      * Constructor
      */
     constructor(
         private router: Router,
         private dialog: MatDialog,
-        public api: ApiService,
-        private _snackBar: MatSnackBar,
+        public api: ApiService
         )
     {
     }
 
     ngOnInit(): void{
-
-       this.manejador(mediaqueryList);
-       mediaqueryList.addEventListener('change',this.manejador);
        this.codUser = localStorage.getItem('codusuario');
-       this.getIpClient();
-       var currentTime = new Date();
-       console.log(currentTime.toString())
-       const hora = (currentTime.getHours() < 10 ? 0 + `${currentTime.getHours()}` : currentTime.getHours()) +':'+ (currentTime.getMinutes() < 10 ? 0 + `${currentTime.getMinutes()}` : currentTime.getMinutes())+':'+ (currentTime.getSeconds() < 10 ? 0 + `${currentTime.getSeconds()}` : currentTime.getSeconds());
-       console.log(hora)
+
        /* Traer casilleros */
-       this.api.get(`casillero/show_siglas`).subscribe(
+       this.api.get(`estatus/show_unidad`).subscribe(
         (res) => {
-          this.casilleros = res.data
-          console.log(this.casilleros);
+          this.unidades = res.data
+          console.log(this.unidades);
 
         },
         (error) => {
@@ -126,7 +117,7 @@ export class IngesosManifiestoComponent
           this.shippers = res.data
         },
         (error) => {
-          console.log('error buscando la referencia', error)
+          console.log('error buscando la unidad', error)
         }
       );
 
@@ -142,17 +133,6 @@ export class IngesosManifiestoComponent
       );
 
     }
-
-    manejador(EventoMediaQueryList) {
-
-        if(EventoMediaQueryList.matches) {
-          this.mobile = true;
-
-        } else {
-          this.mobile = false;
-        }
-
-        }
 
     checkaerea(aereo:any){
         this.refAerea =  aereo;
@@ -187,7 +167,7 @@ export class IngesosManifiestoComponent
         return Math.floor(Math.pow(10, n-1) + Math.random() * (Math.pow(10, n) - Math.pow(10, n-1) - 1));
       }
 
-    async crearManifiestoForm(){
+    crearManifiestoForm(){
         let items:any = []
         let descriptionItems:string='';
         const fecha = moment().format('YYYY-MM-DD')
@@ -343,53 +323,41 @@ export class IngesosManifiestoComponent
 
         }
         console.log(params)
+
         this.api.post('ingresomanifiesto/create', params).subscribe(
             async (res) => {
                 console.log(res);
-
-                if (!res.status) {
-                    this._snackBar.open(`${res.message ? res.message : res.messageval}`, '', {
-                        horizontalPosition: this.horizontalPosition,
-                        verticalPosition: this.verticalPosition,
-                        duration: 4000,
-                      })
-                      this.inputEl.nativeElement.focus()
-                }else{
-
-                    this.guiaRadicado = res.data;
-                    this._snackBar.open(`Se creó la guía ${this.guiaRadicado} correctamente!!`, '', {
-                        horizontalPosition: this.horizontalPosition,
-                        verticalPosition: this.verticalPosition,
-                        duration: 4000,
-                      });
-                      this.inputEl.nativeElement.focus()
-                        this.nombrecasillero = null;
-                        this.codigoCliente = null;
-                        this.creacionManifiesto = null;
-                        this.shipperSelected = null;
-                        this.proveedorSelected = null;
-                        this.casilleroSelected === undefined
-                        this.codCasillero    = null;
-                        this.nombrecasillero= null;
-                        this.tipoCliente= null;
-                        this.valorGlobal= null;
-                        this.sumaItems= null;
-                        this.otrosItem= null;
-                        this.totalFactura= null;
-                        this.tipoEnvio= null;
-                        this.pesoitems= null;
-                        this.altoitems= null;
-                        this.anchoitems= null;
-                        this.largoitems= null;
-                        this.volumenitems= null;
-                        this.dataItemSelect =[];
-                        this.description = null;
-                        this.statusSelected = null;
-                        this.referencia= null;
-                        this.prealertData = null;
-
-                }
-
+              Swal.fire({
+                title: 'Se creó el manifiesto correctamente',
+                icon: 'success',
+                confirmButtonColor: '#050506',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'OK',
+              }).then(() => {
+                this.nombrecasillero = null;
+                this.codigoCliente = null;
+                this.creacionManifiesto = null;
+                this.shipperSelected = null;
+                this.proveedorSelected = null;
+                this.casilleroSelected = null;
+                this.codCasillero    = null;
+                this.nombrecasillero= null;
+                this.tipoCliente= null;
+                this.valorGlobal= null;
+                this.sumaItems= null;
+                this.otrosItem= null;
+                this.totalFactura= null;
+                this.tipoEnvio= null;
+                this.pesoitems= null;
+                this.altoitems= null;
+                this.anchoitems= null;
+                this.largoitems= null;
+                this.volumenitems= null;
+                this.dataItemSelect =[];
+                this.description = null;
+                this.statusSelected = null;
+                this.referencia= null;
+              })
             },
             (error) => {
               console.log('error creando el manifiesto', error);
@@ -398,13 +366,54 @@ export class IngesosManifiestoComponent
 
     }
 
+    traerProcesos(){
+        console.log(this.unidad)
+        this.api.get(`estatus/show_proceso/${this.unidad}`).subscribe(
+            (res) => {
+              this.procesos = res.data
+              console.log(this.procesos);
+
+            },
+            (error) => {
+              console.log('error buscando el proceso', error)
+            }
+          );
+    }
+
+    traerSubProcesos(){
+        console.log(this.proecesoSelected)
+        this.api.get(`estatus/show_subproceso/${this.unidad}/${this.proecesoSelected}`).subscribe(
+            (res) => {
+              this.subProcesos = res.data
+              console.log(this.subProcesos);
+
+            },
+            (error) => {
+              console.log('error buscando el sub-proceso', error)
+            }
+          );
+    }
+
+    traerStatus(){
+        console.log(this.subProcesoSelected)
+        this.api.get(`estatus/show_arbolestatus/${this.unidad}/${this.proecesoSelected}/${this.subProcesoSelected}`).subscribe(
+            (res) => {
+              this.estatus = res.data
+              console.log(this.estatus);
+
+            },
+            (error) => {
+              console.log('error buscando el sub-proceso', error)
+            }
+          );
+    }
+
     openDialogagg() {
 
         const dialogConfig = new MatDialogConfig();
 
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
-
 
         dialogConfig.data = {
             id: 1,
@@ -446,7 +455,6 @@ export class IngesosManifiestoComponent
 
        console.log(this.tipoEnvio)
     }
-
 
     openDialog() {
 
@@ -526,7 +534,7 @@ export class IngesosManifiestoComponent
             (res) => {
               console.log(res);
                 this.prealertData = res.data
-                this.shipperSelected = res.data[0]?.nomcliente
+                this.shipperSelected = res.data[0].nomcliente
                 const proveedor = this.proveedores.filter(p => p.nombre==res.data[0].companiadestino)
                 console.log(proveedor);
 
@@ -537,7 +545,6 @@ export class IngesosManifiestoComponent
                 console.log(casillero); */
                 this.casilleroSelected = res.data[0].codcasillero.slice(0, 3)
                 this.codCasillero = res.data[0].codcasillero.slice(3);
-                console.log(this.codCasillero)
                 this.consultarCasillero()
                 this.tipoCliente = 'CASILLERO INTERNACIONAL ZOOM';
                 /* if(casillero.length !=0){
@@ -681,6 +688,18 @@ export class IngesosManifiestoComponent
           );
     }
 
+    goBack(){
+        this.router.navigate(['/home'])
+    }
+
+    calcularVolumen(){
+        this.volumenitems = null;
+        this.volumenitems = this.altoitems * this.anchoitems * this.largoitems;
+    }
+
+    cerrarSideBar(){
+        this.api.sidebar = !this.api.sidebar
+    }
     verifyItemSelected(tipo:any, itemSelected:any){
         if(tipo==2){
             this.dataItemSelect.forEach(c=>{
@@ -783,30 +802,6 @@ export class IngesosManifiestoComponent
             })
 
         }
-    }
-
-    async getIpClient() {
-        try {
-          const response = await axios.get('https://api.ipify.org?format=json');
-
-          this.ipCliente = response.data.ip
-          console.log(this.ipCliente);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-
-    goBack(){
-        this.router.navigate(['/home'])
-    }
-
-    calcularVolumen(){
-        this.volumenitems = null;
-        this.volumenitems = this.altoitems * this.anchoitems * this.largoitems;
-    }
-
-    cerrarSideBar(){
-        this.api.sidebar = !this.api.sidebar
     }
 
     loadingFireToast(title:any) {

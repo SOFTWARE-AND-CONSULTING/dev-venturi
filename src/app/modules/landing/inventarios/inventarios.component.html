@@ -25,7 +25,7 @@
                 </div>
                 <div class="col-span-3 text-center">
                     <h3 class="text-2xl font-bold">Último nro. procesado:</h3>
-                    <h3 class="text-primary text-2xl font-bold">0</h3>
+                    <h3 class="text-primary text-2xl font-bold">{{guiaRadicado}}</h3>
                 </div>
                 <div class="col-span-2 flex flex-col">
                     <div>
@@ -57,7 +57,7 @@
             <div class="flex grid grid-cols-6 gap-6 items-center flex-row">
                 <mat-form-field class="w-full col-span-2">
                     <mat-label>Unidad</mat-label>
-                    <select matNativeControl [(ngModel)]="unidad" name="unidad" (change)="traerProcesos()">
+                    <select matNativeControl #myInput [(ngModel)]="unidad" name="unidad" (change)="traerProcesos()">
                         <option *ngFor="let unidad of unidades" [value]="unidad.codestatusunidad" >
                             {{unidad.nombre}}
                         </option>
@@ -102,11 +102,11 @@
 
                 <mat-form-field class="  w-full col-span-2">
                     <mat-label>Envío</mat-label>
-                    <input matInput type="number" max="10" (change)="consultarCasillero()" [(ngModel)]="codCasillero" name="shipper" required>
+                    <input matInput type="number" max="20" (change)="consultarGuia()" [(ngModel)]="codGuia" name="shipper" [disabled]="estatusSelected === undefined" required >
                 </mat-form-field>
                 <mat-form-field class="flex-auto col-span-1">
                     <mat-label>Casillero</mat-label>
-                    <input matInput type="number" max="10"  [(ngModel)]="codCasillero" name="shipper" required>
+                    <input matInput type="text" max="10"  [(ngModel)]="codCasillero" name="shipper" readonly>
                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:archive'"></mat-icon>
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
@@ -115,7 +115,7 @@
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-2">
                     <mat-label></mat-label>
-                    <input matInput [(ngModel)]="nombrecasillero" readonly >
+                    <input matInput [(ngModel)]="internacional" readonly >
                 </mat-form-field>
             </div>
         </div>
@@ -131,11 +131,11 @@
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Otros ($)</mat-label>
-                    <input matInput type="number" max="8"  [(ngModel)]="otrosItem" (ngModelChange)="sumarTotal()" name="otro"  required [disabled]="casilleroSelected === undefined">
+                    <input matInput type="text"  [(ngModel)]="otrosItem" (ngModelChange)="sumarTotal()" name="otro"  required [disabled]="casilleroSelected === undefined">
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Total factura ($)</mat-label>
-                    <input matInput type="number" max="10"  [(ngModel)]="totalFactura" name="totalFactura"  disabled>
+                    <input matInput type="text" [(ngModel)]="totalFactura" name="totalFactura"  disabled>
                 </mat-form-field>
                 <mat-form-field class="w-full col-span-1">
                     <mat-label>Tipo envio</mat-label>
@@ -228,7 +228,7 @@
                           </tbody>
                     </table>
                     <div class="col-span-2 grid gap-4">
-                        <button mat-flat-button color="primary" (click)="openDialogagg()" [disabled]="casilleroSelected === undefined">
+                        <button mat-flat-button color="primary" (click)="openDialogagg()" [disabled]="codCasillero === undefined">
                             Agregar
                             <mat-icon [svgIcon]="'heroicons_outline:plus-sm'"></mat-icon>
                         </button>
